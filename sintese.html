@@ -161,7 +161,7 @@ const fios = [
     origem: "Animal (colágeno intestinal ovino/bovino)",
     absorcao: "Absorvível (proteólise enzimática; força ~7–10 dias; absorção completa ~60–70 dias)",
     estrutura: "Multifilamentar torcido",
-    uso: "Mucosas, ligaduras pequenas, cirurgias gastrointestinais e urinárias"
+    uso: "Ligaduras, mucosa e submucosa, peritônio"
   },
   {
     nome: "Catgut Cromado",
@@ -169,7 +169,7 @@ const fios = [
     origem: "Animal (tratado com sais de cromo)",
     absorcao: "Absorvível (força ~14–21 dias; absorção ~90 dias)",
     estrutura: "Multifilamentar torcido",
-    uso: "Intestino, bexiga, peritônio, ligaduras de vasos maiores"
+    uso: "Subcutâneo, ginecologia (útero/cúpula vaginal), urologia (bexiga)"
   },
   {
     nome: "Polyglactina 910 (Vicryl®)",
@@ -177,7 +177,23 @@ const fios = [
     origem: "Sintética (ácido glicólico + ácido láctico)",
     absorcao: "Absorvível por hidrólise (força 3–4 semanas; absorção 56–70 dias)",
     estrutura: "Multifilamentar trançado e revestido",
-    uso: "Subcutâneo, músculo, peritônio, aponeurose, ginecologia/obstetrícia"
+    uso: "Submucosa, músculo, peritônio, anastomoses gastrointestinais"
+  },
+  {
+    nome: "Vicryl Rapid",
+    imagem: "",
+    origem: "Sintética",
+    absorcao: "Absorvível (rápida)",
+    estrutura: "Multifilamentar trançado",
+    uso: "Pele, episiorrafia, pequenos procedimentos superficiais"
+  },
+  {
+    nome: "Vicryl Plus",
+    imagem: "",
+    origem: "Sintética (com revestimento antibacteriano)",
+    absorcao: "Absorvível por hidrólise",
+    estrutura: "Multifilamentar trançado e revestido",
+    uso: "Mesmos usos do Vicryl, preferido em locais com maior risco de infecção"
   },
   {
     nome: "Poliglicólico (Dexon®)",
@@ -185,7 +201,7 @@ const fios = [
     origem: "Sintética",
     absorcao: "Absorvível por hidrólise (56–70 dias)",
     estrutura: "Multifilamentar trançado",
-    uso: "Tecido celular subcutâneo, músculo, fáscia, trato geniturinário"
+    uso: "Peritônio, subcutâneo, músculo"
   },
   {
     nome: "Poliglecaprona (Monocryl®)",
@@ -193,7 +209,23 @@ const fios = [
     origem: "Sintética",
     absorcao: "Absorvível por hidrólise (perde força em 2–3 semanas; absorção ~90 dias)",
     estrutura: "Monofilamentar",
-    uso: "Subcutâneo, sutura intradérmica, intestino e vias urinárias"
+    uso: "Intradérmico, subcutâneo, cirurgia plástica"
+  },
+  {
+    nome: "Polidioxanona (PDS)",
+    imagem: "",
+    origem: "Sintética",
+    absorcao: "Absorvível por hidrólise (longa duração)",
+    estrutura: "Monofilamentar",
+    uso: "Aponeurose, parede abdominal, anastomoses profundas, transplantes"
+  },
+  {
+    nome: "Gliconato (Maxon)",
+    imagem: "",
+    origem: "Sintética",
+    absorcao: "Absorvível por hidrólise (longa sustentação)",
+    estrutura: "Monofilamentar",
+    uso: "Tecidos sob tensão, parede abdominal, situações que exigem longa sustentação"
   },
   {
     nome: "Polipropileno (Prolene®)",
@@ -201,7 +233,7 @@ const fios = [
     origem: "Sintética",
     absorcao: "Não absorvível",
     estrutura: "Monofilamentar",
-    uso: "Anastomoses vasculares, fechamento de parede abdominal, hernioplastias"
+    uso: "Anastomoses vasculares, aponeurose, cirurgia cardiovascular"
   },
   {
     nome: "Náilon (Poliamida)",
@@ -209,7 +241,7 @@ const fios = [
     origem: "Sintética",
     absorcao: "Não absorvível (perda lenta de força ao longo dos anos)",
     estrutura: "Monofilamentar ou multifilamentar",
-    uso: "Pele, microcirurgia vascular, oftalmologia"
+    uso: "Pele, microanastomoses, oftalmologia"
   },
   {
     nome: "Seda",
@@ -217,31 +249,56 @@ const fios = [
     origem: "Animal (fibroína do Bombyx mori)",
     absorcao: "Não absorvível funcional (perde força progressivamente)",
     estrutura: "Multifilamentar trançado ou torcido",
-    uso: "Ligadura de vasos, suturas gastrointestinais, odontologia"
+    uso: "Ligaduras e procedimentos sem grande tensão"
   },
   {
-    nome: "Aço Inoxidável",
-    imagem: "",
-    origem: "Metálica",
-    absorcao: "Não absorvível",
-    estrutura: "Monofilamentar ou multifilamentar",
-    uso: "Síntese óssea, esternorrafia, cirurgia ortopédica"
-  },
-  {
-    nome: "Algodão / Linho",
+    nome: "Algodão",
     imagem: "",
     origem: "Vegetal",
     absorcao: "Não absorvível",
     estrutura: "Multifilamentar torcido",
-    uso: "Ligaduras (atualmente em desuso devido alta reação inflamatória)"
+    uso: "Ligaduras"
+  },
+  {
+    nome: "Linho",
+    imagem: "",
+    origem: "Vegetal",
+    absorcao: "Não absorvível",
+    estrutura: "Multifilamentar torcido",
+    uso: "Ligaduras"
+  },
+  {
+    nome: "Poliéster (Ethibond)",
+    imagem: "",
+    origem: "Sintética",
+    absorcao: "Não absorvível",
+    estrutura: "Multifilamentar trançado",
+    uso: "Ortopedia, fixação tendínea, estruturas sob alta tensão"
+  },
+  {
+    nome: "PTFE",
+    imagem: "",
+    origem: "Sintética",
+    absorcao: "Não absorvível",
+    estrutura: "Monofilamentar",
+    uso: "Cirurgia vascular e reconstruções delicadas"
+  },
+  {
+    nome: "Aço cirúrgico",
+    imagem: "",
+    origem: "Metálica",
+    absorcao: "Não absorvível",
+    estrutura: "Monofilamentar ou multifilamentar",
+    uso: "Ortopedia, fixação esternal, estruturas ósseas"
   }
 ];
 
-const roundsTotal = 12;
+const roundsTotal = fios.length;
 let round = 0;
 let score = 0;
 let currentQuestion = null;
 let waitingNext = false;
+let roundFios = [];
 
 function shuffle(array) {
   const copy = [...array];
@@ -285,8 +342,7 @@ function buildVisualHtml(fio) {
   return `<div class="visual">Foto do fio (opcional)</div>`;
 }
 
-function buildQuestion() {
-  const fio = fios[Math.floor(Math.random() * fios.length)];
+function buildQuestion(fio) {
   const type = Math.floor(Math.random() * 3);
 
   if (type === 0) {
@@ -349,6 +405,7 @@ function showStart() {
 function startGame() {
   round = 0;
   score = 0;
+  roundFios = shuffle([...fios]);
   nextQuestion();
 }
 
@@ -359,7 +416,8 @@ function nextQuestion() {
   }
 
   waitingNext = false;
-  currentQuestion = buildQuestion();
+  const fio = roundFios[round % roundFios.length];
+  currentQuestion = buildQuestion(fio);
   updateStats();
   updateProgress();
 
