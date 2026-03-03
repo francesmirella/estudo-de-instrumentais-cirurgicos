@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulação Completa</title>
+<link rel="stylesheet" href="styles.css">
+<!--
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgba(255,255,255,0.18), transparent 55%),
+    radial-gradient(900px 400px at 100% 0%, rgba(255,255,255,0.14), transparent 50%),
+    linear-gradient(135deg, #0d3f70, #1d6fd8);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.app {
+  width: min(1080px, 100%);
+  background: #fff;
+  border: 1px solid #d8e9fb;
+  border-radius: 22px;
+  box-shadow: 0 18px 50px rgba(5, 34, 73, 0.24);
+  padding: 24px;
+}
+h1 { margin: 0 0 8px; color: #0f4c81; font-weight: 800; letter-spacing: -0.02em; }
+.subtitle { margin: 0 0 12px; color: #3f6e98; font-weight: 500; }
+.topbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.btn {
+  border: 1px solid #d3e6fb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: .2s ease;
+  font-weight: 700;
+  background: #eaf4ff;
+  color: #0f4c81;
+  padding: 9px 13px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn.primary {
+  background: linear-gradient(180deg, #0f4c81, #0c3f6b);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(15, 76, 129, 0.24);
+}
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.progress {
+  border: 1px solid #d9e8f8;
+  border-radius: 14px;
+  background: #f8fcff;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+.progress-track {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+.pill {
+  border: 1px solid #d5e8fb;
+  border-radius: 999px;
+  padding: 7px 10px;
+  text-align: center;
+  color: #35678f;
+  font-weight: 700;
+  background: #eef6ff;
+  font-size: 0.84rem;
+}
+.pill.active { background: #0f4c81; color: #fff; border-color: #0f4c81; }
+.pill.done { background: #e9f6ec; color: #2f6b42; border-color: #b8dfc5; }
+.stage {
+  border: 1px solid #d8e9fb;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, #f9fcff);
+  padding: 16px;
+  min-height: 460px;
+}
+.hidden { display: none !important; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.card-btn {
+  border: 1px solid #cfe3f7;
+  border-radius: 12px;
+  background: #eaf4ff;
+  color: #0f4c81;
+  padding: 12px;
+  text-align: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+.card-btn.selected { border-color: #0f4c81; box-shadow: 0 0 0 2px rgba(15, 76, 129, 0.22); }
+.question-box {
+  border: 1px solid #d9e8f8;
+  border-radius: 12px;
+  background: #fbfdff;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.q-title { margin: 0 0 8px; color: #0f4c81; font-weight: 700; }
+.options { display: flex; flex-wrap: wrap; gap: 8px; }
+.option-btn {
+  border: 1px solid #d3e6fb;
+  border-radius: 10px;
+  background: #e3f2fd;
+  color: #0f4c81;
+  padding: 9px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.option-btn.selected {
+  border-color: #0f4c81;
+  box-shadow: 0 0 0 2px rgba(15, 76, 129, 0.22);
+}
+.option-btn:disabled {
+  opacity: .8;
+  cursor: not-allowed;
+}
+.option-btn.correct { background: #ebf7ee; border-color: #43a047; color: #2f6b42; }
+.option-btn.wrong { background: #fdeeee; border-color: #e53935; color: #a02c2c; }
+.feedback { min-height: 24px; color: #0f4c81; font-weight: 700; margin-top: 8px; }
+.bank { border: 1px solid #d9e8f8; border-radius: 12px; background: #fbfdff; padding: 10px; margin-bottom: 10px; }
+.bank-title { margin: 0 0 8px; color: #0f4c81; font-weight: 700; }
+.bank-items { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+.draggable {
+  border: 1px solid #cfe3f7;
+  border-radius: 10px;
+  background: #eaf4ff;
+  color: #0f4c81;
+  padding: 10px;
+  text-align: center;
+  font-weight: 700;
+  cursor: grab;
+}
+.mesa-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.campo {
+  border: 2px dashed #9bc0e8;
+  border-radius: 12px;
+  background: #f5faff;
+  min-height: 105px;
+  padding: 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.campo.over { border-color: #0f4c81; background: #eaf4ff; }
+.campo.correct { border-color: #43a047; background: #ebf7ee; }
+.campo.wrong { border-color: #e53935; background: #fdeeee; }
+.campo-label { font-size: .8rem; color: #3f6e98; font-weight: 700; }
+.campo-item { font-weight: 700; color: #0f4c81; }
+.campo-hint { font-size: .78rem; color: #7a3d3d; }
+.team-zone {
+  position: relative;
+  width: min(900px, 100%);
+  margin: 0 auto;
+  min-height: 500px;
+  border: 1px solid #d9e8f8;
+  border-radius: 12px;
+  background: #fbfdff;
+  overflow: visible;
+}
+.axis-head,
+.axis-foot,
+.axis-left,
+.axis-right {
+  position: absolute;
+  color: #0f4c81;
+  font-weight: 700;
+  font-size: .85rem;
+}
+.axis-head { left: 50%; top: 2%; transform: translateX(-50%); z-index: 3; }
+.axis-foot { left: 50%; bottom: 2%; transform: translateX(-50%); z-index: 3; }
+.axis-left {
+  left: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 185px;
+  text-align: left;
+  line-height: 1.2;
+  z-index: 3;
+}
+.axis-right {
+  right: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 195px;
+  text-align: right;
+  line-height: 1.2;
+  z-index: 3;
+}
+.paciente {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 130px;
+  height: 240px;
+  border-radius: 12px;
+  background: #d53f57;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 700;
+  z-index: 2;
+}
+.paciente-cabeca {
+  position: absolute;
+  left: 50%;
+  top: -16px;
+  transform: translateX(-50%);
+  width: 58px;
+  height: 28px;
+  border-radius: 30px 30px 0 0;
+  background: #bf3046;
+}
+.mayo-ref {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 130px;
+  height: 72px;
+  border-radius: 10px;
+  border: 2px solid #9bc0e8;
+  background: #eaf4ff;
+  color: #0f4c81;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: .82rem;
+  text-align: center;
+  line-height: 1.15;
+  z-index: 1;
+}
+.mayo-ref.esquerda {
+  left: 4%;
+  right: auto;
+}
+.mayo-ref.direita {
+  right: 4%;
+  left: auto;
+}
+.team-slot {
+  position: absolute;
+  width: 170px;
+  min-height: 78px;
+  border: 2px dashed #9bc0e8;
+  border-radius: 12px;
+  background: #f5faff;
+  text-align: center;
+  padding: 8px;
+  z-index: 4;
+}
+.team-slot.over { border-color: #0f4c81; background: #eaf4ff; }
+.team-slot.correct { border-color: #43a047; background: #ebf7ee; }
+.team-slot.wrong { border-color: #e53935; background: #fdeeee; }
+.team-slot.slot-lateral-inferior-direita { right: 26%; bottom: 12%; }
+.team-slot.slot-lateral-inferior-esquerda { left: 26%; bottom: 12%; }
+.team-slot.slot-lateral-superior-esquerda { left: 26%; top: 22%; }
+.team-slot.slot-lateral-superior-direita { right: 26%; top: 22%; }
+.team-slot.slot-ao-lado-auxiliar-esquerda { left: 6%; top: 48%; transform: translateY(-50%); }
+.team-slot.slot-ao-lado-auxiliar-direita { right: 6%; top: 48%; transform: translateY(-50%); }
+.team-slot.slot-atras-instrumentador-esquerda { left: 6%; top: 26%; }
+.team-slot.slot-atras-instrumentador-direita { right: 6%; top: 26%; }
+.slot-label { display: block; font-size: .76rem; color: #3f6e98; font-weight: 700; min-height: 16px; }
+.slot-value { display: block; font-weight: 700; color: #0f4c81; }
+.slot-hint { display: block; font-size: .78rem; color: #7a3d3d; min-height: 16px; }
+.result-grid { display: grid; gap: 10px; width: min(640px, 100%); }
+.bar { border: 1px solid #d5e8fb; border-radius: 999px; overflow: hidden; height: 16px; background: #e7f2ff; }
+.bar > div { height: 100%; background: linear-gradient(90deg, #1e88e5, #0f4c81); }
+@media (max-width: 880px) { .progress-track { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+-->
+</head>
+<body>
+<div class="app">
+  <h1>Simulação Completa</h1>
+  <p class="subtitle">1. Escolha da Cirurgia → 2. Raciocínio da Montagem → 3. Monte a Mesa → 4. Equipe → 5. Resultado</p>
+
+  <div class="topbar">
+    <a class="btn" href="flashcards.html">← Voltar para Instrumentais</a>
+    <a class="btn" href="sintese.html">Síntese</a>
+    <a class="btn" href="monte-mesa.html">Monte a Mesa</a>
+    <a class="btn" href="qual-e-o-sinal.html">Qual é o Sinal?</a>
+  </div>
+
+  <div class="progress">
+    <div class="progress-track">
+      <div id="pill1" class="pill">1. Escolha da Cirurgia</div>
+      <div id="pill2" class="pill">2. Raciocínio da Montagem</div>
+      <div id="pill3" class="pill">3. Monte a Mesa</div>
+      <div id="pill4" class="pill">4. Equipe</div>
+      <div id="pill5" class="pill">5. Resultado</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div id="fase1"></div>
+    <div id="fase2" class="hidden"></div>
+    <div id="fase3" class="hidden"></div>
+    <div id="fase4" class="hidden"></div>
+    <div id="fase5" class="hidden"></div>
+  </div>
+</div>
+
+<script>
+const CIRURGIAS = {
+  colecistectomia: {
+    label: "Colecistectomia",
+    quadrante: "QSD — supraumbilical",
+    posicaoCirurgiao: "direita",
+    posicaoMayo: "esquerda",
+    sentidoMesa: "horario",
+    campoCorreto: {},
+    equipeCorreta: { direita: "cirurgiao", esquerda: "auxiliar", cabeca: "instrumentador" }
+  },
+  histerectomia: {
+    label: "Histerectomia",
+    quadrante: "Hipogástrio — infraumbilical",
+    posicaoCirurgiao: "esquerda",
+    posicaoMayo: "direita",
+    sentidoMesa: "anti-horario",
+    campoCorreto: {},
+    equipeCorreta: { direita: "auxiliar", esquerda: "cirurgiao", cabeca: "instrumentador" }
+  },
+  apendicectomia: {
+    label: "Apendicectomia",
+    quadrante: "QID — infraumbilical",
+    posicaoCirurgiao: "esquerda",
+    posicaoMayo: "direita",
+    sentidoMesa: "anti-horario",
+    campoCorreto: {},
+    equipeCorreta: { direita: "auxiliar", esquerda: "cirurgiao", cabeca: "instrumentador" }
+  },
+  prostatectomia: {
+    label: "Prostatectomia",
+    quadrante: "Pelve — infraumbilical",
+    posicaoCirurgiao: "esquerda",
+    posicaoMayo: "direita",
+    sentidoMesa: "horario",
+    campoCorreto: {},
+    equipeCorreta: { direita: "auxiliar", esquerda: "cirurgiao", cabeca: "instrumentador" }
+  }
+};
+
+const CAMPO_ITENS = {
+  1: ["Bisturi", "Tesoura Mayo", "Tesoura Metzenbaum"],
+  2: ["Pinça Anatômica", "Pinça Dente de Rato", "Pinça Adson"],
+  3: ["Pinça Kelly", "Pinça Kocher", "Pinça Halstead", "Pinça Crile", "Pinça Mixter"],
+  4: ["Farabeuf", "Doyen", "Válvula Maleável", "Deaver", "Gosset", "Balfour", "Finochietto", "Afastador Adson"],
+  5: ["Backaus", "Babcock", "Allis", "Satinsky", "Potts", "Collins", "Duval", "Saca-Bocado", "Cureta de Siemens"],
+  6: ["Porta-Agulha Mayo-Hegar", "Porta-Agulha Mathieu", "Pinça Anatômica", "Pinça Dente de Rato", "Fio"]
+};
+
+const INSTRUMENTOS = Array.from(new Set(Object.values(CAMPO_ITENS).flat()));
+
+const EQUIPE_ITENS = {
+  cirurgiao: "🔴 Cirurgião",
+  auxiliar: "🟡 1º Auxiliar",
+  instrumentador: "🔵 Instrumentador",
+  "mesa-mayo": "🟢 Mesa + Mayo"
+};
+
+const slotLabels = {
+  1: "1 — Diérese",
+  2: "2 — Preensão",
+  3: "3 — Hemostasia",
+  4: "4 — Exposição",
+  5: "5 — Especial",
+  6: "6 — Síntese"
+};
+
+const MESA_CONFIG = {
+  supraUmbilical: {
+    cirugiaoLado: "direito",
+    campo1Posicao: { top: 0, left: "10%" },
+    sentido: "horario"
+  },
+  infraUmbilical: {
+    cirugiaoLado: "esquerdo",
+    campo1Posicao: { top: 0, right: "10%" },
+    sentido: "anti-horario"
+  }
+};
+
+const orderByDirection = {
+  horario: [1, 2, 3, 4, 5, 6],
+  "anti-horario": [3, 2, 1, 6, 5, 4]
+};
+
+const gameState = {
+  cirurgiaSelecionada: null,
+  respostasRaciocinio: { q1: null, q2: null, q3: null, q1Correta: false, q2Correta: false, q3Correta: false },
+  respostaMesa: { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null },
+  posicoesMesa: { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null },
+  posicoesEquipe: {},
+  score: { fase2: 0, fase3: 0, fase4: 0 }
+};
+
+let currentFase = 1;
+let selectedSurgeryKey = null;
+let equipeConfirmada = false;
+
+function showFase(n) {
+  currentFase = n;
+  [1, 2, 3, 4, 5].forEach((i) => {
+    document.getElementById(`fase${i}`).classList.toggle("hidden", i !== n);
+    const pill = document.getElementById(`pill${i}`);
+    pill.classList.remove("active", "done");
+    if (i === n) pill.classList.add("active");
+    if (i < n) pill.classList.add("done");
+  });
+}
+
+function surgeryExpected() { return CIRURGIAS[gameState.cirurgiaSelecionada]; }
+
+function resetRaciocinio() {
+  gameState.respostasRaciocinio = { q1: null, q2: null, q3: null, q1Correta: false, q2Correta: false, q3Correta: false };
+}
+
+function resetMesa() {
+  const answer = {};
+  const used = new Set();
+
+  Object.keys(CAMPO_ITENS).forEach((campoKey) => {
+    const campo = Number(campoKey);
+    const pool = CAMPO_ITENS[campo] || [];
+    const uniquePool = pool.filter((item) => !used.has(item));
+    const sourcePool = uniquePool.length > 0 ? uniquePool : pool;
+    const picked = sourcePool[Math.floor(Math.random() * sourcePool.length)];
+    answer[campo] = picked;
+    used.add(picked);
+  });
+
+  gameState.respostaMesa = answer;
+  gameState.posicoesMesa = { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null };
+}
+
+function resetEquipe() {
+  gameState.posicoesEquipe = createEmptyEquipePositions();
+  equipeConfirmada = false;
+}
+
+function getTipoCirurgia() {
+  if (!gameState.cirurgiaSelecionada) return "supraUmbilical";
+  const quadrante = surgeryExpected().quadrante.toLowerCase();
+  return quadrante.includes("supra") ? "supraUmbilical" : "infraUmbilical";
+}
+
+function getEquipeLayout() {
+  if (getTipoCirurgia() === "supraUmbilical") {
+    return [
+      { key: "lateral-inferior-direita", className: "slot-lateral-inferior-direita", label: "Lateral inferior direita", expected: "cirurgiao" },
+      { key: "lateral-superior-esquerda", className: "slot-lateral-superior-esquerda", label: "Lateral superior esquerda", expected: "auxiliar" },
+      { key: "ao-lado-auxiliar", className: "slot-ao-lado-auxiliar-esquerda", label: "Ao lado do auxiliar", expected: "instrumentador" },
+      { key: "atras-do-instrumentador", className: "slot-atras-instrumentador-esquerda", label: "Atrás do instrumentador", expected: "mesa-mayo" }
+    ];
+  }
+
+  return [
+    { key: "lateral-inferior-esquerda", className: "slot-lateral-inferior-esquerda", label: "Lateral inferior esquerda", expected: "cirurgiao" },
+    { key: "lateral-superior-direita", className: "slot-lateral-superior-direita", label: "Lateral superior direita", expected: "auxiliar" },
+    { key: "ao-lado-auxiliar", className: "slot-ao-lado-auxiliar-direita", label: "Ao lado do auxiliar", expected: "instrumentador" },
+    { key: "atras-do-instrumentador", className: "slot-atras-instrumentador-direita", label: "Atrás do instrumentador", expected: "mesa-mayo" }
+  ];
+}
+
+function getEquipeAnswerKey() {
+  const answerKey = {};
+  getEquipeLayout().forEach((slot) => {
+    answerKey[slot.key] = slot.expected;
+  });
+  return answerKey;
+}
+
+function createEmptyEquipePositions() {
+  const positions = {};
+  getEquipeLayout().forEach((slot) => {
+    positions[slot.key] = null;
+  });
+  return positions;
+}
+
+function renderFase1() {
+  const cards = Object.entries(CIRURGIAS).map(([key, cfg]) => `
+    <button class="card-btn ${selectedSurgeryKey === key ? "selected" : ""}" type="button" onclick="selectCirurgia('${key}')">${cfg.label}</button>
+  `).join("");
+
+  document.getElementById("fase1").innerHTML = `
+    <h2 class="q-title">1. Escolha da Cirurgia</h2>
+    <p class="subtitle">Selecione o ato cirúrgico para iniciar a simulação.</p>
+    <div class="cards">${cards}</div>
+    <div class="topbar topbar-mt-12">
+      <button class="btn primary" type="button" onclick="confirmCirurgia()" ${selectedSurgeryKey ? "" : "disabled"}>Próxima fase</button>
+    </div>
+  `;
+}
+
+function selectCirurgia(key) { selectedSurgeryKey = key; renderFase1(); }
+
+function confirmCirurgia() {
+  if (!selectedSurgeryKey) return;
+  gameState.cirurgiaSelecionada = selectedSurgeryKey;
+  resetRaciocinio();
+  resetMesa();
+  resetEquipe();
+  renderFase2();
+  showFase(2);
+}
+
+function answerQ1(value) {
+  if (gameState.respostasRaciocinio.q1 !== null) return;
+  const esperado = surgeryExpected().quadrante.toLowerCase().includes("supra") ? "supra" : "infra";
+  gameState.respostasRaciocinio.q1 = value;
+  gameState.respostasRaciocinio.q1Correta = value === esperado;
+  renderFase2();
+}
+
+function answerQ2(value) {
+  if (gameState.respostasRaciocinio.q2 !== null) return;
+  gameState.respostasRaciocinio.q2 = value;
+  gameState.respostasRaciocinio.q2Correta = value === surgeryExpected().posicaoCirurgiao;
+  renderFase2();
+}
+
+function answerQ3(value) {
+  if (gameState.respostasRaciocinio.q3 !== null) return;
+  gameState.respostasRaciocinio.q3 = value;
+  gameState.respostasRaciocinio.q3Correta = value === surgeryExpected().sentidoMesa;
+  gameState.score.fase2 = [
+    gameState.respostasRaciocinio.q1Correta,
+    gameState.respostasRaciocinio.q2Correta,
+    gameState.respostasRaciocinio.q3Correta
+  ].filter(Boolean).length;
+  renderFase2();
+}
+
+function renderFase2() {
+  const r = gameState.respostasRaciocinio;
+  const canQ2 = r.q1 !== null;
+  const canQ3 = r.q2 !== null;
+  const canAdvance = r.q3 !== null;
+
+  document.getElementById("fase2").innerHTML = `
+    <h2 class="q-title">2. Raciocínio da Montagem</h2>
+    <p class="subtitle">Responda em sequência.</p>
+
+    <div class="question-box">
+      <p class="q-title">Pergunta 1: Essa cirurgia é supra ou infraumbilical?</p>
+      <div class="options">
+        <button class="option-btn ${r.q1 === 'supra' ? 'selected' : ''}" type="button" onclick="answerQ1('supra')" ${r.q1 !== null ? 'disabled' : ''}>Supraumbilical</button>
+        <button class="option-btn ${r.q1 === 'infra' ? 'selected' : ''}" type="button" onclick="answerQ1('infra')" ${r.q1 !== null ? 'disabled' : ''}>Infraumbilical</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="question-box ${canQ2 ? "" : "hidden"}">
+      <p class="q-title">Pergunta 2: O cirurgião fica de qual lado do paciente?</p>
+      <div class="options">
+        <button class="option-btn ${r.q2 === 'direita' ? 'selected' : ''}" type="button" onclick="answerQ2('direita')" ${r.q2 !== null ? 'disabled' : ''}>Direita</button>
+        <button class="option-btn ${r.q2 === 'esquerda' ? 'selected' : ''}" type="button" onclick="answerQ2('esquerda')" ${r.q2 !== null ? 'disabled' : ''}>Esquerda</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="question-box ${canQ3 ? "" : "hidden"}">
+      <p class="q-title">Pergunta 3: Como a mesa deve ser organizada?</p>
+      <div class="options">
+        <button class="option-btn ${r.q3 === 'horario' ? 'selected' : ''}" type="button" onclick="answerQ3('horario')" ${r.q3 !== null ? 'disabled' : ''}>Sentido horário</button>
+        <button class="option-btn ${r.q3 === 'anti-horario' ? 'selected' : ''}" type="button" onclick="answerQ3('anti-horario')" ${r.q3 !== null ? 'disabled' : ''}>Sentido anti-horário</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="topbar topbar-mt-12">
+      <button class="btn" type="button" onclick="showFase(1)">Voltar</button>
+      <button class="btn primary" type="button" onclick="goFase3()" ${canAdvance ? "" : "disabled"}>Próxima fase</button>
+    </div>
+  `;
+}
+
+function goFase3() {
+  resetMesa();
+  renderFase3();
+  showFase(3);
+}
+
+function allowDrop(e) { e.preventDefault(); }
+function dragStart(e) { e.dataTransfer.setData("item", e.target.dataset.item); }
+
+function getAvailableMesaItems() {
+  const used = new Set(Object.values(gameState.posicoesMesa).filter(Boolean));
+  return Object.values(gameState.respostaMesa).filter((name) => !used.has(name));
+}
+
+function dropMesa(e) {
+  e.preventDefault();
+  const item = e.dataTransfer.getData("item");
+  const campo = e.currentTarget.dataset.campo;
+  if (!item || !campo) return;
+
+  Object.keys(gameState.posicoesMesa).forEach((slot) => {
+    if (gameState.posicoesMesa[slot] === item) gameState.posicoesMesa[slot] = null;
+  });
+
+  gameState.posicoesMesa[campo] = item;
+  renderFase3();
+}
+
+function clearCampo(campo) {
+  gameState.posicoesMesa[campo] = null;
+  renderFase3();
+}
+
+function renderFase3() {
+  const cfg = surgeryExpected();
+  const direction = cfg.sentidoMesa;
+  const mesaAnchor = cfg.posicaoCirurgiao === "direita" ? MESA_CONFIG.supraUmbilical : MESA_CONFIG.infraUmbilical;
+  const order = orderByDirection[direction] || orderByDirection.horario;
+  const available = getAvailableMesaItems();
+
+  const bankHtml = available.map((name) => `
+    <div class="draggable" draggable="true" data-item="${name}" ondragstart="dragStart(event)">${name}</div>
+  `).join("");
+
+  const slotsHtml = order.map((campo) => {
+    const itemKey = gameState.posicoesMesa[campo];
+
+    return `
+      <div class="campo" data-campo="${campo}" ondragover="allowDrop(event); this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="this.classList.remove('over'); dropMesa(event)" onclick="clearCampo(${campo})">
+        <span class="campo-label">${slotLabels[campo]}</span>
+        <span class="campo-item">${itemKey ? itemKey : "(vazio)"}</span>
+        <span class="campo-hint"></span>
+      </div>
+    `;
+  }).join("");
+
+  const allFilled = Object.values(gameState.posicoesMesa).every(Boolean);
+
+  document.getElementById("fase3").innerHTML = `
+    <h2 class="q-title">3. Monte a Mesa</h2>
+    <p class="subtitle">Âncora: cirurgião no lado <strong>${mesaAnchor.cirugiaoLado}</strong> | Sentido: <strong>${direction}</strong>.</p>
+
+    <div class="bank">
+      <p class="bank-title">Banco de instrumentos</p>
+      <div class="bank-items">${bankHtml || "<p class='subtitle subtitle-no-margin'>Todos os itens já foram posicionados.</p>"}</div>
+    </div>
+
+    <div class="bank">
+      <p class="bank-title">Mesa (fluxo em U: 6→5→4→1→2→3)</p>
+      <div class="mesa-grid">${slotsHtml}</div>
+    </div>
+
+    <div class="topbar topbar-mt-12">
+      <button class="btn" type="button" onclick="showFase(2)">Voltar</button>
+      <button class="btn primary" type="button" onclick="confirmMesaAndGo()" ${allFilled ? "" : "disabled"}>Próxima fase</button>
+    </div>
+  `;
+}
+
+function confirmMesaAndGo() {
+  let correct = 0;
+
+  Object.keys(gameState.posicoesMesa).forEach((campo) => {
+    const item = gameState.posicoesMesa[campo];
+    if (!item) return;
+    if (gameState.respostaMesa[Number(campo)] === item) correct += 1;
+  });
+
+  gameState.score.fase3 = correct;
+  goFase4();
+}
+
+function goFase4() {
+  resetEquipe();
+  renderFase4();
+  showFase(4);
+}
+
+function getAvailableEquipeItems() {
+  const used = new Set(Object.values(gameState.posicoesEquipe).filter(Boolean));
+  return Object.keys(EQUIPE_ITENS).filter((key) => !used.has(key));
+}
+
+function dropEquipe(e) {
+  e.preventDefault();
+  const item = e.dataTransfer.getData("item");
+  const slot = e.currentTarget.dataset.posicao;
+  if (!item || !slot) return;
+
+  Object.keys(gameState.posicoesEquipe).forEach((key) => {
+    if (gameState.posicoesEquipe[key] === item) gameState.posicoesEquipe[key] = null;
+  });
+
+  gameState.posicoesEquipe[slot] = item;
+  equipeConfirmada = false;
+  renderFase4();
+}
+
+function clearSlotEquipe(slot) {
+  gameState.posicoesEquipe[slot] = null;
+  equipeConfirmada = false;
+  renderFase4();
+}
+
+function renderFase4() {
+  const slotsLayout = getEquipeLayout();
+  const expected = getEquipeAnswerKey();
+  const available = getAvailableEquipeItems();
+  const mayoClass = surgeryExpected().posicaoMayo === "esquerda" ? "mayo-ref esquerda" : "mayo-ref direita";
+
+  const bankHtml = available.map((key) => `
+    <div class="draggable" draggable="true" data-item="${key}" ondragstart="dragStart(event)">${EQUIPE_ITENS[key]}</div>
+  `).join("");
+
+  const slotsHtml = slotsLayout.map((slot) => {
+    const itemKey = gameState.posicoesEquipe[slot.key];
+    const extraClass = !equipeConfirmada ? "" : (itemKey === expected[slot.key] ? "correct" : "wrong");
+    const hint = !equipeConfirmada || itemKey === expected[slot.key] ? "" : `Esperado: ${EQUIPE_ITENS[expected[slot.key]]}`;
+
+    return `
+      <div class="team-slot ${slot.className} ${extraClass}" data-posicao="${slot.key}" ondragover="allowDrop(event); this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="this.classList.remove('over'); dropEquipe(event)" onclick="clearSlotEquipe('${slot.key}')">
+        <span class="slot-label">${slot.label}</span>
+        <span class="slot-value">${itemKey ? EQUIPE_ITENS[itemKey] : "(solte aqui)"}</span>
+        <span class="slot-hint">${hint}</span>
+      </div>
+    `;
+  }).join("");
+
+  const allFilled = Object.values(gameState.posicoesEquipe).every(Boolean);
+
+  document.getElementById("fase4").innerHTML = `
+    <h2 class="q-title">4. Equipe</h2>
+    <p class="subtitle">Arraste os 4 itens para os 4 slots ao redor da maca e confirme.</p>
+
+    <div class="bank">
+      <p class="bank-title">Equipe e mesa</p>
+      <div class="bank-items">${bankHtml || "<p class='subtitle subtitle-no-margin'>Todos os itens já foram posicionados.</p>"}</div>
+    </div>
+
+    <div class="team-zone">
+      <div class="axis-head">CABEÇA ▲</div>
+      <div class="axis-foot">▼ PÉ</div>
+      <div class="axis-left">LADO ESQUERDO DO PACIENTE</div>
+      <div class="axis-right">LADO DIREITO DO PACIENTE</div>
+      <div class="paciente"><div class="paciente-cabeca"></div>Paciente</div>
+      <div class="${mayoClass}">MESA DE MAYO</div>
+      ${slotsHtml}
+    </div>
+
+    <div class="topbar topbar-mt-12">
+      <button class="btn" type="button" onclick="showFase(3)">Voltar</button>
+      <button class="btn" type="button" onclick="confirmEquipe()" ${allFilled ? "" : "disabled"}>Confirmar</button>
+      <button class="btn primary" type="button" onclick="goFase5()" ${equipeConfirmada ? "" : "disabled"}>Próxima fase</button>
+    </div>
+  `;
+}
+
+function confirmEquipe() {
+  const expected = getEquipeAnswerKey();
+  let correct = 0;
+
+  Object.keys(gameState.posicoesEquipe).forEach((slot) => {
+    if (gameState.posicoesEquipe[slot] === expected[slot]) correct += 1;
+  });
+
+  gameState.score.fase4 = correct;
+  equipeConfirmada = true;
+  renderFase4();
+}
+
+function goFase5() {
+  renderFase5();
+  showFase(5);
+}
+
+function pct(v, t) { return Math.round((v / t) * 100); }
+
+function finalMessage(scoreFinal) {
+  if (scoreFinal >= 9) return "Excelente execução.";
+  if (scoreFinal >= 7) return "Quase lá, revise os pontos em vermelho.";
+  return "Revise o raciocínio, a mesa e o posicionamento da equipe.";
+}
+
+function renderFase5() {
+  const p2 = pct(gameState.score.fase2, 3);
+  const p3 = pct(gameState.score.fase3, 6);
+  const p4 = pct(gameState.score.fase4, 4);
+  const total = gameState.score.fase2 + gameState.score.fase3 + gameState.score.fase4;
+  const final10 = Math.round((total / 13) * 10);
+
+  document.getElementById("fase5").innerHTML = `
+    <h2 class="q-title">5. Resultado</h2>
+    <p class="subtitle">Cirurgia: <strong>${surgeryExpected().label}</strong></p>
+
+    <div class="result-grid">
+      <div>
+        <div class="result-row"><span>Raciocínio</span><span>${p2}%</span></div>
+        <div class="bar"><div class="bar-fill" data-width="${p2}"></div></div>
+      </div>
+      <div>
+        <div class="result-row"><span>Mesa</span><span>${p3}%</span></div>
+        <div class="bar"><div class="bar-fill" data-width="${p3}"></div></div>
+      </div>
+      <div>
+        <div class="result-row"><span>Equipe</span><span>${p4}%</span></div>
+        <div class="bar"><div class="bar-fill" data-width="${p4}"></div></div>
+      </div>
+    </div>
+
+    <p class="subtitle result-final"><strong>Score final: ${final10}/10</strong> — ${finalMessage(final10)}</p>
+
+    <div class="topbar topbar-mt-10">
+      <button class="btn" type="button" onclick="tentarNovamente()">Tentar novamente</button>
+      <button class="btn primary" type="button" onclick="outraCirurgia()">Outra cirurgia</button>
+    </div>
+  `;
+
+  document.querySelectorAll("#fase5 .bar-fill").forEach((bar) => {
+    const value = Number(bar.dataset.width || 0);
+    bar.style.width = `${Math.max(0, Math.min(100, value))}%`;
+  });
+}
+
+function tentarNovamente() {
+  resetRaciocinio();
+  resetMesa();
+  resetEquipe();
+  gameState.score = { fase2: 0, fase3: 0, fase4: 0 };
+  showFase(1);
+  renderFase1();
+}
+
+function outraCirurgia() {
+  gameState.cirurgiaSelecionada = null;
+  selectedSurgeryKey = null;
+  tentarNovamente();
+}
+
+renderFase1();
+showFase(1);
+</script>
+</body>
+</html>

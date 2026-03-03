@@ -4,38 +4,58 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Instrumentais Cirúrgicos Flashcards</title>
-<style>
+<link rel="stylesheet" href="styles.css">
+<!--
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
+
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  font-family: Tahoma, Arial, sans-serif;
+  font-family: "Inter", Tahoma, Arial, sans-serif;
   background:
-    radial-gradient(1200px 500px at 10% -10%, rgba(255,255,255,0.18), transparent 55%),
-    radial-gradient(900px 400px at 100% 0%, rgba(255,255,255,0.14), transparent 50%),
-    linear-gradient(135deg, #0d3f70, #1d6fd8);
+    linear-gradient(135deg, #0d1b2a, #1a2f4a);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
+  position: relative;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 26px 26px;
+  pointer-events: none;
+  opacity: 0.28;
 }
 .app {
   width: min(980px, 100%);
-  background: #ffffff;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 22px;
-  border: 1px solid #d8e9fb;
-  box-shadow: 0 18px 50px rgba(5, 34, 73, 0.24);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 18px 50px rgba(3, 9, 22, 0.45);
   padding: 24px;
+  position: relative;
+  z-index: 1;
 }
 h1 {
   margin: 0 0 8px;
-  color: #0f4c81;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  color: #f4f8ff;
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 .subtitle {
   margin: 0 0 14px;
-  color: #3f6e98;
+  color: #c4d7ee;
   font-weight: 500;
 }
 .toolbar { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
@@ -291,38 +311,117 @@ h1 {
   font-weight: 700;
 }
 .welcome-screen {
-  border: 1px solid #d6e8fb;
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 16px;
   padding: 26px;
-  background: linear-gradient(180deg, #fafdff, #edf6ff);
-  text-align: center;
+  background: rgba(255,255,255,0.04);
   margin-bottom: 12px;
 }
 .welcome-title {
   margin: 0 0 8px;
-  color: #0f4c81;
+  color: #f3f7ff;
+  font-weight: 800;
 }
 .welcome-text {
-  margin: 0 0 16px;
-  color: #3a668f;
+  margin: 0 0 18px;
+  color: #b9cde4;
 }
-.welcome-actions {
-  display: flex;
-  flex-wrap: wrap;
+.mode-section-title {
+  margin: 0 0 8px;
+  color: #dbe9fb;
+  font-size: .95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.mode-grid-basic {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
+  margin-bottom: 14px;
+}
+.mode-grid-advanced {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.mode-card {
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: #f2f7ff;
+  text-align: left;
+  width: 100%;
+  padding: 12px;
+  cursor: pointer;
+  transition: .18s ease;
+  text-decoration: none;
+  display: block;
+}
+.mode-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,0.3);
+}
+.mode-card.basic {
+  padding: 10px;
+  background: transparent;
+  border-style: solid;
+}
+.mode-card.advanced {
+  min-height: 110px;
+}
+.mode-card.simulacao {
+  grid-column: span 2;
+  min-height: 132px;
+  background: linear-gradient(135deg, rgba(126,87,255,0.28), rgba(33,150,243,0.2));
+  border-color: rgba(172,190,255,0.55);
+}
+.mode-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  margin-bottom: 8px;
+  display: block;
+}
+.mode-card.basic .mode-icon {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+.mode-name {
+  font-weight: 800;
+  color: #f3f7ff;
+  margin: 0;
+}
+.mode-card.basic .mode-name {
+  font-size: .92rem;
+}
+.mode-desc {
+  margin: 4px 0 0;
+  color: #c2d6ec;
+  font-size: .83rem;
+  line-height: 1.25;
+}
+.mode-badge {
+  display: inline-block;
+  margin-bottom: 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+}
+.link-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
 }
-.start-btn {
-  background: linear-gradient(180deg, #0f4c81, #0c3f6b);
-  color: #fff;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 700;
-  box-shadow: 0 6px 16px rgba(15, 76, 129, 0.24);
+@media (max-width: 860px) {
+  .mode-grid-basic { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mode-grid-advanced { grid-template-columns: 1fr; }
+  .mode-card.simulacao { grid-column: span 1; }
 }
-</style>
+-->
 </head>
 <body>
 <div class="app">
@@ -331,12 +430,51 @@ h1 {
 
   <div id="welcomeScreen" class="welcome-screen">
     <h2 class="welcome-title">Como você quer estudar hoje?</h2>
-    <p class="welcome-text">Selecione um modo para iniciar: flashcards, quiz, lista completa ou análise.</p>
-    <div class="welcome-actions">
-      <button class="start-btn" type="button" onclick="startStudy('flashcard')">Flashcards</button>
-      <button class="start-btn" type="button" onclick="startStudy('quiz')">Quiz</button>
-      <button class="start-btn" type="button" onclick="startStudy('lista')">Lista</button>
-      <button class="start-btn" type="button" onclick="startStudy('analise')">Análise</button>
+    <p class="welcome-text">Selecione o modo de estudo e comece sua sessão.</p>
+
+    <p class="mode-section-title">Modos Básicos</p>
+    <div class="mode-grid-basic">
+      <button class="mode-card basic" type="button" onclick="startStudy('flashcard')">
+        <span class="mode-icon">🗂️</span>
+        <p class="mode-name">Flashcards</p>
+      </button>
+      <button class="mode-card basic" type="button" onclick="startStudy('quiz')">
+        <span class="mode-icon">❓</span>
+        <p class="mode-name">Quiz</p>
+      </button>
+      <button class="mode-card basic" type="button" onclick="startStudy('lista')">
+        <span class="mode-icon">📚</span>
+        <p class="mode-name">Lista</p>
+      </button>
+      <button class="mode-card basic" type="button" onclick="startStudy('analise')">
+        <span class="mode-icon">📊</span>
+        <p class="mode-name">Análise</p>
+      </button>
+    </div>
+
+    <p class="mode-section-title">Modos Avançados</p>
+    <div class="mode-grid-advanced">
+      <a class="mode-card advanced" href="sintese.html">
+        <span class="mode-icon">🧵</span>
+        <p class="mode-name">Síntese</p>
+        <p class="mode-desc">Classifique fios por origem, absorção e estrutura.</p>
+      </a>
+      <a class="mode-card advanced" href="monte-mesa.html">
+        <span class="mode-icon">🧰</span>
+        <p class="mode-name">Monte a Mesa</p>
+        <p class="mode-desc">Organize os campos com fluxo cirúrgico.</p>
+      </a>
+      <a class="mode-card advanced" href="qual-e-o-sinal.html">
+        <span class="mode-icon">✋</span>
+        <p class="mode-name">Qual é o Sinal?</p>
+        <p class="mode-desc">Treine comunicação por gestos instrumentais.</p>
+      </a>
+      <a class="mode-card advanced simulacao" href="simulacao-completa.html">
+        <span class="mode-badge">Novo</span>
+        <span class="mode-icon">🩺</span>
+        <p class="mode-name">Simulação Completa</p>
+        <p class="mode-desc">Fluxo completo da cirurgia: raciocínio, mesa e equipe.</p>
+      </a>
     </div>
   </div>
 
@@ -348,6 +486,10 @@ h1 {
       <button id="quizModeBtn" class="mode-btn" type="button" onclick="setMode('quiz')">Quiz</button>
       <button id="listModeBtn" class="mode-btn" type="button" onclick="setMode('lista')">Lista</button>
       <button id="analysisModeBtn" class="mode-btn" type="button" onclick="setMode('analise')">Análise</button>
+      <button class="mode-btn" type="button" onclick="window.location.href='sintese.html'">Síntese</button>
+      <button class="mode-btn" type="button" onclick="window.location.href='monte-mesa.html'">Monte a Mesa</button>
+      <button class="mode-btn" type="button" onclick="window.location.href='qual-e-o-sinal.html'">Qual é o Sinal?</button>
+      <button class="mode-btn" type="button" onclick="window.location.href='simulacao-completa.html'">Simulação Completa</button>
       <button class="mode-btn" type="button" onclick="resetAnalise()">Resetar análise</button>
     </div>
 

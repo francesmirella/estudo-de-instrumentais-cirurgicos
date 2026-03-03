@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qual é o Sinal?</title>
+<link rel="stylesheet" href="styles.css">
+<!--
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgba(255,255,255,0.18), transparent 55%),
+    radial-gradient(900px 400px at 100% 0%, rgba(255,255,255,0.14), transparent 50%),
+    linear-gradient(135deg, #0d3f70, #1d6fd8);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.app {
+  width: min(980px, 100%);
+  background: #fff;
+  border-radius: 22px;
+  border: 1px solid #d8e9fb;
+  box-shadow: 0 18px 50px rgba(5, 34, 73, 0.24);
+  padding: 24px;
+}
+h1 {
+  margin: 0 0 8px;
+  color: #0f4c81;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.subtitle {
+  margin: 0 0 14px;
+  color: #3f6e98;
+  font-weight: 500;
+}
+.topbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.btn {
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: .2s ease;
+  font-weight: 700;
+  background: #eaf4ff;
+  color: #0f4c81;
+  padding: 9px 13px;
+  border: 1px solid #d3e6fb;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn.primary {
+  background: linear-gradient(180deg, #0f4c81, #0c3f6b);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(15, 76, 129, 0.24);
+}
+.btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
+.stats {
+  color: #0f4c81;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.stats span {
+  background: #eef6ff;
+  border: 1px solid #d5e8fb;
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+.progress-wrap { width: 100%; height: 10px; background: #dbe8f5; border-radius: 999px; overflow: hidden; margin-bottom: 12px; }
+.progress-bar { width: 0%; height: 100%; background: #1e88e5; transition: width .35s ease; }
+.card {
+  min-height: 360px;
+  border: 1px solid #d8e9fb;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, #f9fcff);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.instrument-name {
+  margin: 0 0 10px;
+  color: #0f4c81;
+  font-size: 1.2rem;
+}
+.question { color: #0f4c81; margin: 0 0 12px; }
+.options { width: min(700px, 100%); }
+.option-btn {
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #e3f2fd;
+  color: #0f4c81;
+  cursor: pointer;
+  font-weight: 600;
+  text-align: left;
+}
+.option-btn:hover { background: #cde7ff; }
+.correct { background: #43a047 !important; color: #fff !important; }
+.wrong { background: #e53935 !important; color: #fff !important; }
+.feedback { min-height: 24px; margin-top: 8px; font-weight: 700; color: #0f4c81; }
+.hidden { display: none; }
+-->
+</head>
+<body>
+<div class="app">
+  <h1>Qual é o Sinal?</h1>
+  <p class="subtitle">Veja o nome do instrumento e escolha o gesto correto entre 4 opções.</p>
+
+  <div class="topbar">
+    <a class="btn" href="flashcards.html">← Voltar para Instrumentais</a>
+    <a class="btn" href="sintese.html">Síntese</a>
+    <a class="btn" href="monte-mesa.html">Monte a Mesa</a>
+    <a class="btn" href="simulacao-completa.html">Simulação Completa</a>
+    <button class="btn" type="button" onclick="showStart()">Reiniciar</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="card" id="card"></div>
+</div>
+
+<script>
+const sinais = [
+  { instrumento: "Bisturi", gesto: "Lápis / violino: mão em pinça fina simulando empunhadura do bisturi." },
+  { instrumento: "Tesoura Curva", gesto: "Indicador e médio simulando tesoura com trajetória curva." },
+  { instrumento: "Tesoura Reta", gesto: "Indicador e médio paralelos simulando tesoura em corte reto." },
+  { instrumento: "Pinça Anatômica", gesto: "Pinça fina: polegar e indicador aproximados sem dente." },
+  { instrumento: "Pinça Dente de Rato", gesto: "Pinça fina com 'dente': gesto de pinça com ponta em gancho." },
+  { instrumento: "Gaze", gesto: "Mão em concha com movimento curto de limpeza." },
+  { instrumento: "Compressa", gesto: "Mãos abertas formando apoio amplo para compressa." },
+  { instrumento: "Fio para Ligadura", gesto: "Gesto de laço/círculo com os dedos para ligadura." },
+  { instrumento: "Pinça Hemostática", gesto: "Pinça com trava: fechar e simular travamento da cremalheira." },
+  { instrumento: "Porta Agulha", gesto: "Pinça firme de punho, simulando preensão de agulha." },
+  { instrumento: "Farabeuf", gesto: "Dois dedos em gancho retraindo lateralmente." },
+  { instrumento: "Doyen", gesto: "Palma em curva ampla para afastamento profundo." },
+  { instrumento: "Gosset", gesto: "Duas mãos afastando em autoestático bilateral." },
+  { instrumento: "Backaus", gesto: "Pinça pontiaguda de campo: pinçar e fixar os panos." }
+];
+
+const roundsTotal = sinais.length;
+let round = 0;
+let score = 0;
+let currentQuestion = null;
+let waitingNext = false;
+let order = [];
+
+function shuffle(array) {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function buildOptions(correctGesto) {
+  const distractors = shuffle(sinais.map((item) => item.gesto).filter((gesto) => gesto !== correctGesto)).slice(0, 3);
+  return shuffle([correctGesto, ...distractors]);
+}
+
+function updateStats() {
+  const high = Number(localStorage.getItem("sinalHighScore") || 0);
+  document.getElementById("stats").innerHTML = `
+    <span>Rodada: ${Math.min(round + 1, roundsTotal)}/${roundsTotal}</span>
+    <span>Pontuação: ${score}</span>
+    <span>Recorde: ${high}</span>
+  `;
+}
+
+function updateProgress() {
+  const progress = (round / roundsTotal) * 100;
+  document.getElementById("progressBar").style.width = `${Math.max(0, Math.min(100, progress)).toFixed(1)}%`;
+}
+
+function showStart() {
+  round = 0;
+  score = 0;
+  waitingNext = false;
+  order = shuffle([...sinais]);
+  updateStats();
+  updateProgress();
+
+  document.getElementById("card").innerHTML = `
+    <h2 class="question">Treino de sinal cirúrgico</h2>
+    <p class="subtitle">Você verá o nome do instrumento e escolherá o gesto correto.</p>
+    <button class="btn primary" type="button" onclick="startGame()">Iniciar Jogo</button>
+  `;
+}
+
+function startGame() {
+  round = 0;
+  score = 0;
+  order = shuffle([...sinais]);
+  nextQuestion();
+}
+
+function nextQuestion() {
+  if (round >= roundsTotal) {
+    showFinal();
+    return;
+  }
+
+  waitingNext = false;
+  const item = order[round];
+  currentQuestion = {
+    instrumento: item.instrumento,
+    correct: item.gesto,
+    options: buildOptions(item.gesto)
+  };
+
+  updateStats();
+  updateProgress();
+
+  document.getElementById("card").innerHTML = `
+    <h3 class="instrument-name">Instrumento: ${currentQuestion.instrumento}</h3>
+    <h2 class="question">Qual é o sinal?</h2>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="next-wrap"><button class="btn hidden" id="nextBtn" type="button" onclick="advanceRound()">Próxima</button></div>
+  `;
+
+  const optionsEl = document.getElementById("options");
+  currentQuestion.options.forEach((option) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "option-btn";
+    btn.textContent = option;
+    btn.onclick = () => checkAnswer(btn, option);
+    optionsEl.appendChild(btn);
+  });
+}
+
+function checkAnswer(button, selected) {
+  if (waitingNext) return;
+  waitingNext = true;
+
+  const feedback = document.getElementById("feedback");
+  document.querySelectorAll(".option-btn").forEach((b) => b.disabled = true);
+
+  if (selected === currentQuestion.correct) {
+    score += 1;
+    button.classList.add("correct");
+    feedback.textContent = "✔ Correto!";
+  } else {
+    button.classList.add("wrong");
+    feedback.textContent = `✖ Resposta correta: ${currentQuestion.correct}`;
+    document.querySelectorAll(".option-btn").forEach((b) => {
+      if (b.textContent === currentQuestion.correct) b.classList.add("correct");
+    });
+  }
+
+  document.getElementById("nextBtn").classList.remove("hidden");
+  updateStats();
+}
+
+function advanceRound() {
+  round += 1;
+  nextQuestion();
+}
+
+function showFinal() {
+  const high = Number(localStorage.getItem("sinalHighScore") || 0);
+  const newHigh = Math.max(high, score);
+  localStorage.setItem("sinalHighScore", String(newHigh));
+
+  updateStats();
+  updateProgress();
+  document.getElementById("progressBar").style.width = "100%";
+
+  const percentage = ((score / roundsTotal) * 100).toFixed(1);
+  document.getElementById("card").innerHTML = `
+    <h2 class="question">Resultado Final</h2>
+    <p class="subtitle">Você acertou ${score} de ${roundsTotal} (${percentage}%).</p>
+    <p class="subtitle">Recorde: ${newHigh}</p>
+    <div class="topbar topbar-center topbar-mt-8">
+      <button class="btn primary" type="button" onclick="startGame()">Jogar Novamente</button>
+      <a class="btn" href="flashcards.html">Voltar para Instrumentais</a>
+    </div>
+  `;
+}
+
+showStart();
+</script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Síntese - Classificação de Fios</title>
+<link rel="stylesheet" href="styles.css">
+<!--
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgba(255,255,255,0.18), transparent 55%),
+    radial-gradient(900px 400px at 100% 0%, rgba(255,255,255,0.14), transparent 50%),
+    linear-gradient(135deg, #0d3f70, #1d6fd8);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.app {
+  width: min(980px, 100%);
+  background: #fff;
+  border-radius: 22px;
+  border: 1px solid #d8e9fb;
+  box-shadow: 0 18px 50px rgba(5, 34, 73, 0.24);
+  padding: 24px;
+}
+h1 {
+  margin: 0 0 8px;
+  color: #0f4c81;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.subtitle {
+  margin: 0 0 14px;
+  color: #3f6e98;
+  font-weight: 500;
+}
+.topbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.btn {
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: .2s ease;
+  font-weight: 700;
+  background: #eaf4ff;
+  color: #0f4c81;
+  padding: 9px 13px;
+  border: 1px solid #d3e6fb;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn.primary {
+  background: linear-gradient(180deg, #0f4c81, #0c3f6b);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(15, 76, 129, 0.24);
+}
+.btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
+.stats {
+  color: #0f4c81;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.stats span {
+  background: #eef6ff;
+  border: 1px solid #d5e8fb;
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+.progress-wrap { width: 100%; height: 10px; background: #dbe8f5; border-radius: 999px; overflow: hidden; margin-bottom: 12px; }
+.progress-bar { width: 0%; height: 100%; background: #1e88e5; transition: width .35s ease; }
+.card {
+  min-height: 360px;
+  border: 1px solid #d8e9fb;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, #f9fcff);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.fio-name {
+  margin: 0 0 10px;
+  color: #0f4c81;
+  font-size: 1.2rem;
+}
+.visual {
+  width: 250px;
+  height: 170px;
+  border: 1px solid #d4e6f9;
+  border-radius: 12px;
+  background: #f5faff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 8px;
+  color: #4c7399;
+  font-weight: 700;
+  margin: 0 auto 12px;
+}
+.visual img { width: 100%; height: 100%; object-fit: contain; }
+.question { color: #0f4c81; margin: 0 0 12px; }
+.options { width: min(640px, 100%); }
+.option-btn {
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #e3f2fd;
+  color: #0f4c81;
+  cursor: pointer;
+  font-weight: 600;
+}
+.option-btn:hover { background: #cde7ff; }
+.correct { background: #43a047 !important; color: #fff !important; }
+.wrong { background: #e53935 !important; color: #fff !important; }
+.feedback { min-height: 24px; margin-top: 8px; font-weight: 700; color: #0f4c81; }
+.hidden { display: none; }
+-->
+</head>
+<body>
+<div class="app">
+  <h1>Síntese - Classificação de Fios</h1>
+  <p class="subtitle">Jogo para treinar origem, absorção, estrutura e uso principal dos fios.</p>
+
+  <div class="topbar">
+    <a class="btn" href="flashcards.html">← Voltar para Instrumentais</a>
+    <a class="btn" href="monte-mesa.html">Monte a Mesa</a>
+    <a class="btn" href="qual-e-o-sinal.html">Qual é o Sinal?</a>
+    <a class="btn" href="simulacao-completa.html">Simulação Completa</a>
+    <button class="btn" type="button" onclick="showStart()">Reiniciar</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="card" id="card"></div>
+</div>
+
+<script>
+const fios = [
+  {
+    nome: "Catgut Simples",
+    imagem: "",
+    origem: "Animal (colágeno intestinal ovino/bovino)",
+    absorcao: "Absorvível (proteólise enzimática; força ~7–10 dias; absorção completa ~60–70 dias)",
+    estrutura: "Multifilamentar torcido",
+    uso: "Mucosas, ligaduras pequenas, cirurgias gastrointestinais e urinárias"
+  },
+  {
+    nome: "Catgut Cromado",
+    imagem: "",
+    origem: "Animal (tratado com sais de cromo)",
+    absorcao: "Absorvível (força ~14–21 dias; absorção ~90 dias)",
+    estrutura: "Multifilamentar torcido",
+    uso: "Intestino, bexiga, peritônio, ligaduras de vasos maiores"
+  },
+  {
+    nome: "Polyglactina 910 (Vicryl®)",
+    imagem: "",
+    origem: "Sintética (ácido glicólico + ácido láctico)",
+    absorcao: "Absorvível por hidrólise (força 3–4 semanas; absorção 56–70 dias)",
+    estrutura: "Multifilamentar trançado e revestido",
+    uso: "Subcutâneo, músculo, peritônio, aponeurose, ginecologia/obstetrícia"
+  },
+  {
+    nome: "Poliglicólico (Dexon®)",
+    imagem: "",
+    origem: "Sintética",
+    absorcao: "Absorvível por hidrólise (56–70 dias)",
+    estrutura: "Multifilamentar trançado",
+    uso: "Tecido celular subcutâneo, músculo, fáscia, trato geniturinário"
+  },
+  {
+    nome: "Poliglecaprona (Monocryl®)",
+    imagem: "",
+    origem: "Sintética",
+    absorcao: "Absorvível por hidrólise (perde força em 2–3 semanas; absorção ~90 dias)",
+    estrutura: "Monofilamentar",
+    uso: "Subcutâneo, sutura intradérmica, intestino e vias urinárias"
+  },
+  {
+    nome: "Polipropileno (Prolene®)",
+    imagem: "",
+    origem: "Sintética",
+    absorcao: "Não absorvível",
+    estrutura: "Monofilamentar",
+    uso: "Anastomoses vasculares, fechamento de parede abdominal, hernioplastias"
+  },
+  {
+    nome: "Náilon (Poliamida)",
+    imagem: "",
+    origem: "Sintética",
+    absorcao: "Não absorvível (perda lenta de força ao longo dos anos)",
+    estrutura: "Monofilamentar ou multifilamentar",
+    uso: "Pele, microcirurgia vascular, oftalmologia"
+  },
+  {
+    nome: "Seda",
+    imagem: "",
+    origem: "Animal (fibroína do Bombyx mori)",
+    absorcao: "Não absorvível funcional (perde força progressivamente)",
+    estrutura: "Multifilamentar trançado ou torcido",
+    uso: "Ligadura de vasos, suturas gastrointestinais, odontologia"
+  },
+  {
+    nome: "Aço Inoxidável",
+    imagem: "",
+    origem: "Metálica",
+    absorcao: "Não absorvível",
+    estrutura: "Monofilamentar ou multifilamentar",
+    uso: "Síntese óssea, esternorrafia, cirurgia ortopédica"
+  },
+  {
+    nome: "Algodão / Linho",
+    imagem: "",
+    origem: "Vegetal",
+    absorcao: "Não absorvível",
+    estrutura: "Multifilamentar torcido",
+    uso: "Ligaduras (atualmente em desuso devido alta reação inflamatória)"
+  }
+];
+
+const roundsTotal = 12;
+let round = 0;
+let score = 0;
+let currentQuestion = null;
+let waitingNext = false;
+
+function shuffle(array) {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function pickDifferentValues(field, correctValue) {
+  const universe = Array.from(new Set(fios.map((item) => item[field]))).filter((v) => v !== correctValue);
+  return shuffle(universe).slice(0, 3);
+}
+
+function origemDireta(origem) {
+  if (origem.startsWith("Animal")) return "Animal";
+  if (origem.startsWith("Sintética")) return "Sintética";
+  if (origem.startsWith("Metálica")) return "Metálica";
+  if (origem.startsWith("Vegetal")) return "Vegetal";
+  return "Outra";
+}
+
+function absorcaoDireta(absorcao) {
+  return absorcao.startsWith("Não absorvível") ? "Não absorvível" : "Absorvível";
+}
+
+function estruturaDireta(estrutura) {
+  const e = estrutura.toLowerCase();
+  if (e.includes("monofilamentar ou multifilamentar")) return "Mono e multi";
+  if (e.includes("monofilamentar")) return "Monofilamentar";
+  if (e.includes("multifilamentar")) return "Multifilamentar";
+  return "Outra";
+}
+
+function buildVisualHtml(fio) {
+  if (fio.imagem && fio.imagem.trim()) {
+    const safe = fio.imagem.replace(/'/g, "\\'");
+    return `<div class="visual"><img src="${fio.imagem}" alt="${fio.nome}" onerror="this.parentElement.textContent='${fio.nome}'; this.remove();" data-src="${safe}"></div>`;
+  }
+  return `<div class="visual">Foto do fio (opcional)</div>`;
+}
+
+function buildQuestion() {
+  const fio = fios[Math.floor(Math.random() * fios.length)];
+  const type = Math.floor(Math.random() * 3);
+
+  if (type === 0) {
+    const correct = origemDireta(fio.origem);
+    return {
+      fio,
+      prompt: "Qual origem?",
+      correct,
+      options: shuffle(["Animal", "Sintética", "Metálica", "Vegetal"])
+    };
+  }
+
+  if (type === 1) {
+    const correct = absorcaoDireta(fio.absorcao);
+    return {
+      fio,
+      prompt: "Absorvível ou não absorvível?",
+      correct,
+      options: shuffle(["Absorvível", "Não absorvível"])
+    };
+  }
+
+  const correct = estruturaDireta(fio.estrutura);
+  return {
+    fio,
+    prompt: "Mono ou multi?",
+    correct,
+    options: shuffle(["Monofilamentar", "Multifilamentar", "Mono e multi"])
+  };
+}
+
+function updateStats() {
+  const high = Number(localStorage.getItem("sinteseHighScore") || 0);
+  document.getElementById("stats").innerHTML = `
+    <span>Rodada: ${Math.min(round + 1, roundsTotal)}/${roundsTotal}</span>
+    <span>Pontuação: ${score}</span>
+    <span>Recorde: ${high}</span>
+  `;
+}
+
+function updateProgress() {
+  const progress = (round / roundsTotal) * 100;
+  document.getElementById("progressBar").style.width = `${Math.max(0, Math.min(100, progress)).toFixed(1)}%`;
+}
+
+function showStart() {
+  round = 0;
+  score = 0;
+  waitingNext = false;
+  updateStats();
+  updateProgress();
+
+  document.getElementById("card").innerHTML = `
+    <h2 class="question">Jogo de Síntese</h2>
+    <p class="subtitle">Treine a classificação dos fios com perguntas direcionadas.</p>
+    <button class="btn primary" type="button" onclick="startGame()">Iniciar Jogo</button>
+  `;
+}
+
+function startGame() {
+  round = 0;
+  score = 0;
+  nextQuestion();
+}
+
+function nextQuestion() {
+  if (round >= roundsTotal) {
+    showFinal();
+    return;
+  }
+
+  waitingNext = false;
+  currentQuestion = buildQuestion();
+  updateStats();
+  updateProgress();
+
+  document.getElementById("card").innerHTML = `
+    ${buildVisualHtml(currentQuestion.fio)}
+    <h3 class="fio-name">Fio: ${currentQuestion.fio.nome}</h3>
+    <h2 class="question">${currentQuestion.prompt}</h2>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="next-wrap"><button class="btn hidden" id="nextBtn" type="button" onclick="advanceRound()">Próxima</button></div>
+  `;
+
+  const optionsEl = document.getElementById("options");
+  currentQuestion.options.forEach((option) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "option-btn";
+    btn.textContent = option;
+    btn.onclick = () => checkAnswer(btn, option);
+    optionsEl.appendChild(btn);
+  });
+}
+
+function checkAnswer(button, selected) {
+  if (waitingNext) return;
+  waitingNext = true;
+
+  const feedback = document.getElementById("feedback");
+  document.querySelectorAll(".option-btn").forEach((b) => b.disabled = true);
+
+  if (selected === currentQuestion.correct) {
+    score += 1;
+    button.classList.add("correct");
+    feedback.textContent = "✔ Correto!";
+  } else {
+    button.classList.add("wrong");
+    feedback.textContent = `✖ Resposta correta: ${currentQuestion.correct}`;
+    document.querySelectorAll(".option-btn").forEach((b) => {
+      if (b.textContent === currentQuestion.correct) b.classList.add("correct");
+    });
+  }
+
+  document.getElementById("nextBtn").classList.remove("hidden");
+  updateStats();
+}
+
+function advanceRound() {
+  round += 1;
+  nextQuestion();
+}
+
+function showFinal() {
+  const high = Number(localStorage.getItem("sinteseHighScore") || 0);
+  const newHigh = Math.max(high, score);
+  localStorage.setItem("sinteseHighScore", String(newHigh));
+
+  updateStats();
+  updateProgress();
+  document.getElementById("progressBar").style.width = "100%";
+
+  const percentage = ((score / roundsTotal) * 100).toFixed(1);
+  document.getElementById("card").innerHTML = `
+    <h2 class="question">Resultado Final</h2>
+    <p class="subtitle">Você acertou ${score} de ${roundsTotal} (${percentage}%).</p>
+    <p class="subtitle">Recorde: ${newHigh}</p>
+    <div class="topbar topbar-center topbar-mt-8">
+      <button class="btn primary" type="button" onclick="startGame()">Jogar Novamente</button>
+      <a class="btn" href="flashcards.html">Voltar para Instrumentais</a>
+    </div>
+  `;
+}
+
+showStart();
+</script>
+</body>
+</html>
