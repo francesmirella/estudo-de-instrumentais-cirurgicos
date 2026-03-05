@@ -488,6 +488,12 @@ h1 {
         <p class="mode-desc">Em breve.</p>
       </button>
     </div>
+
+    <p class="mode-section-title">Progresso do aluno</p>
+    <div class="analysis-grid" id="studentProgressPanel"></div>
+    <div class="topbar topbar-mt-8">
+      <button class="mode-btn" type="button" onclick="resetStudentProgress()">Resetar progresso do aluno</button>
+    </div>
   </div>
 
   <div id="studyArea" class="hidden">
@@ -601,6 +607,7 @@ function backToMenu() {
   document.getElementById("studyArea").classList.add("hidden");
   document.getElementById("welcomeScreen").classList.remove("hidden");
   clearTimer();
+  renderStudentProgressPanel();
 }
 
 applyTheme(localStorage.getItem("siteTheme") || "dark");
@@ -720,6 +727,89 @@ const dailyStudyData = JSON.parse(localStorage.getItem("dailyStudyData")) || { g
 
 const errosPorInstrumento = JSON.parse(localStorage.getItem("errosInstrumentos")) || {};
 const historicoPontuacoes = JSON.parse(localStorage.getItem("historicoPontuacoes")) || [];
+const STUDENT_PROGRESS_KEY = "studentProgress";
+
+function readStudentProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(STUDENT_PROGRESS_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function writeStudentProgress(progress) {
+  localStorage.setItem(STUDENT_PROGRESS_KEY, JSON.stringify(progress));
+}
+
+function trackStudentProgress(moduleKey, score, total) {
+  const progress = readStudentProgress();
+  const previous = progress[moduleKey] || {
+    sessions: 0,
+    bestScore: 0,
+    bestTotal: 0,
+    bestPercent: 0,
+    lastScore: 0,
+    lastTotal: 0,
+    lastPercent: 0,
+    totalScore: 0,
+    totalQuestions: 0,
+    updatedAt: ""
+  };
+
+  const safeTotal = Math.max(0, Number(total) || 0);
+  const safeScore = Math.max(0, Number(score) || 0);
+  const percent = safeTotal ? Number(((safeScore / safeTotal) * 100).toFixed(1)) : 0;
+
+  previous.sessions += 1;
+  previous.lastScore = safeScore;
+  previous.lastTotal = safeTotal;
+  previous.lastPercent = percent;
+  previous.totalScore += safeScore;
+  previous.totalQuestions += safeTotal;
+  if (percent >= previous.bestPercent) {
+    previous.bestPercent = percent;
+    previous.bestScore = safeScore;
+    previous.bestTotal = safeTotal;
+  }
+  previous.updatedAt = new Date().toISOString();
+
+  progress[moduleKey] = previous;
+  writeStudentProgress(progress);
+}
+
+function renderStudentProgressPanel() {
+  const panel = document.getElementById("studentProgressPanel");
+  if (!panel) return;
+
+  const labels = {
+    flashcardsQuiz: "Quiz básico",
+    sintese: "Síntese",
+    sinal: "Qual é o Sinal?",
+    simulacao: "Simulação Completa"
+  };
+
+  const progress = readStudentProgress();
+  panel.innerHTML = Object.keys(labels).map((key) => {
+    const data = progress[key];
+    if (!data) {
+      return `<div class="analysis-box"><h4>${labels[key]}</h4><p class="desc">Sem tentativas ainda.</p></div>`;
+    }
+
+    return `
+      <div class="analysis-box">
+        <h4>${labels[key]}</h4>
+        <p class="desc">Sessões: ${data.sessions}</p>
+        <p class="desc">Melhor: ${data.bestScore}/${data.bestTotal} (${data.bestPercent}%)</p>
+        <p class="desc">Último: ${data.lastScore}/${data.lastTotal} (${data.lastPercent}%)</p>
+      </div>
+    `;
+  }).join("");
+}
+
+function resetStudentProgress() {
+  localStorage.removeItem(STUDENT_PROGRESS_KEY);
+  renderStudentProgressPanel();
+}
 
 function saveStorage() {
   localStorage.setItem("errosInstrumentos", JSON.stringify(errosPorInstrumento));
@@ -1406,6 +1496,7 @@ function showQuizFinal() {
   clearTimer();
   quizStarted = false;
   saveHistoricoFinal();
+  trackStudentProgress("flashcardsQuiz", quizScore, quizPerguntas.length);
   document.getElementById("timer").classList.add("hidden");
 
   const total = quizPerguntas.length;
@@ -1456,6 +1547,7 @@ function updateProgress(v) {
 
 setDifficulty("medio");
 renderStats();
+renderStudentProgressPanel();
 </script>
 </body>
 </html>

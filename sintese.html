@@ -166,6 +166,50 @@ function toggleTheme() {
 
 applyTheme(localStorage.getItem("siteTheme") || "dark");
 
+const STUDENT_PROGRESS_KEY = "studentProgress";
+
+function trackStudentProgress(moduleKey, score, total) {
+  let progress = {};
+  try {
+    progress = JSON.parse(localStorage.getItem(STUDENT_PROGRESS_KEY)) || {};
+  } catch {
+    progress = {};
+  }
+
+  const previous = progress[moduleKey] || {
+    sessions: 0,
+    bestScore: 0,
+    bestTotal: 0,
+    bestPercent: 0,
+    lastScore: 0,
+    lastTotal: 0,
+    lastPercent: 0,
+    totalScore: 0,
+    totalQuestions: 0,
+    updatedAt: ""
+  };
+
+  const safeTotal = Math.max(0, Number(total) || 0);
+  const safeScore = Math.max(0, Number(score) || 0);
+  const percent = safeTotal ? Number(((safeScore / safeTotal) * 100).toFixed(1)) : 0;
+
+  previous.sessions += 1;
+  previous.lastScore = safeScore;
+  previous.lastTotal = safeTotal;
+  previous.lastPercent = percent;
+  previous.totalScore += safeScore;
+  previous.totalQuestions += safeTotal;
+  if (percent >= previous.bestPercent) {
+    previous.bestPercent = percent;
+    previous.bestScore = safeScore;
+    previous.bestTotal = safeTotal;
+  }
+  previous.updatedAt = new Date().toISOString();
+
+  progress[moduleKey] = previous;
+  localStorage.setItem(STUDENT_PROGRESS_KEY, JSON.stringify(progress));
+}
+
 const fios = [
   {
     nome: "Nylon",
@@ -499,6 +543,7 @@ function showFinal() {
   const high = Number(localStorage.getItem("sinteseHighScore") || 0);
   const newHigh = Math.max(high, score);
   localStorage.setItem("sinteseHighScore", String(newHigh));
+  trackStudentProgress("sintese", score, roundsTotal);
 
   updateStats();
   updateProgress();

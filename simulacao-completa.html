@@ -325,6 +325,50 @@ function toggleTheme() {
 
 applyTheme(localStorage.getItem("siteTheme") || "dark");
 
+const STUDENT_PROGRESS_KEY = "studentProgress";
+
+function trackStudentProgress(moduleKey, score, total) {
+  let progress = {};
+  try {
+    progress = JSON.parse(localStorage.getItem(STUDENT_PROGRESS_KEY)) || {};
+  } catch {
+    progress = {};
+  }
+
+  const previous = progress[moduleKey] || {
+    sessions: 0,
+    bestScore: 0,
+    bestTotal: 0,
+    bestPercent: 0,
+    lastScore: 0,
+    lastTotal: 0,
+    lastPercent: 0,
+    totalScore: 0,
+    totalQuestions: 0,
+    updatedAt: ""
+  };
+
+  const safeTotal = Math.max(0, Number(total) || 0);
+  const safeScore = Math.max(0, Number(score) || 0);
+  const percent = safeTotal ? Number(((safeScore / safeTotal) * 100).toFixed(1)) : 0;
+
+  previous.sessions += 1;
+  previous.lastScore = safeScore;
+  previous.lastTotal = safeTotal;
+  previous.lastPercent = percent;
+  previous.totalScore += safeScore;
+  previous.totalQuestions += safeTotal;
+  if (percent >= previous.bestPercent) {
+    previous.bestPercent = percent;
+    previous.bestScore = safeScore;
+    previous.bestTotal = safeTotal;
+  }
+  previous.updatedAt = new Date().toISOString();
+
+  progress[moduleKey] = previous;
+  localStorage.setItem(STUDENT_PROGRESS_KEY, JSON.stringify(progress));
+}
+
 const CIRURGIAS = {
   colecistectomia: {
     label: "Colecistectomia",
@@ -980,6 +1024,7 @@ function renderFase5() {
   const p4 = pct(gameState.score.fase4, 4);
   const total = gameState.score.fase2 + gameState.score.fase3 + gameState.score.fase4;
   const final10 = Math.round((total / 13) * 10);
+  trackStudentProgress("simulacao", final10, 10);
   const errors = buildResultErrors();
   const errorsHtml = errors.length
     ? `<div class="result-errors"><h3 class="q-title">O que você errou</h3><ul>${errors.map((item) => `<li>${item}</li>`).join("")}</ul></div>`
