@@ -138,13 +138,11 @@ h1 {
 <body>
 <div class="app">
   <h1>Síntese - Classificação de Fios</h1>
-  <p class="subtitle">Jogo para treinar origem, absorção, estrutura e uso principal dos fios.</p>
+  <p class="subtitle">Treino focado em fios monofilamentares e multifilamentares, absorvíveis e não absorvíveis.</p>
 
   <div class="topbar">
     <a class="btn" href="flashcards.html">← Voltar para Instrumentais</a>
-    <a class="btn" href="qual-e-o-sinal.html">Qual é o Sinal?</a>
-    <a class="btn" href="simulacao-completa.html">Simulação Completa</a>
-    <button class="btn" type="button" onclick="showStart()">Reiniciar</button>
+    <button class="btn theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()">☀️ Modo Claro</button>
   </div>
 
   <div class="stats" id="stats"></div>
@@ -153,146 +151,123 @@ h1 {
 </div>
 
 <script>
+function applyTheme(theme) {
+  const next = theme === "light" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("siteTheme", next);
+  const btn = document.getElementById("themeToggleBtn");
+  if (btn) btn.textContent = next === "dark" ? "☀️ Modo Claro" : "🌙 Modo Escuro";
+}
+
+function toggleTheme() {
+  const current = localStorage.getItem("siteTheme") || "dark";
+  applyTheme(current === "dark" ? "light" : "dark");
+}
+
+applyTheme(localStorage.getItem("siteTheme") || "dark");
+
 const fios = [
   {
-    nome: "Catgut Simples",
+    nome: "Nylon",
     imagem: "",
-    origem: "Animal (colágeno intestinal ovino/bovino)",
-    absorcao: "Absorvível (proteólise enzimática; força ~7–10 dias; absorção completa ~60–70 dias)",
-    estrutura: "Multifilamentar torcido",
-    uso: "Ligaduras, mucosa e submucosa, peritônio"
+    filamento: "Monofilamentar",
+    absorcaoTipo: "Não absorvível",
+    origemTipo: "Sintético",
+    uso: "Sutura de pele e pontos externos"
   },
   {
-    nome: "Catgut Cromado",
+    nome: "Prolene",
     imagem: "",
-    origem: "Animal (tratado com sais de cromo)",
-    absorcao: "Absorvível (força ~14–21 dias; absorção ~90 dias)",
-    estrutura: "Multifilamentar torcido",
-    uso: "Subcutâneo, ginecologia (útero/cúpula vaginal), urologia (bexiga)"
+    filamento: "Monofilamentar",
+    absorcaoTipo: "Não absorvível",
+    origemTipo: "Sintético",
+    uso: "Anastomoses vasculares e fechamento sob baixa reação"
   },
   {
-    nome: "Polyglactina 910 (Vicryl®)",
+    nome: "Polietileno",
     imagem: "",
-    origem: "Sintética (ácido glicólico + ácido láctico)",
-    absorcao: "Absorvível por hidrólise (força 3–4 semanas; absorção 56–70 dias)",
-    estrutura: "Multifilamentar trançado e revestido",
-    uso: "Submucosa, músculo, peritônio, anastomoses gastrointestinais"
+    filamento: "Monofilamentar",
+    absorcaoTipo: "Não absorvível",
+    origemTipo: "Sintético",
+    uso: "Fixações que exigem alta resistência"
   },
   {
-    nome: "Vicryl Rapid",
+    nome: "Polidioxanona",
     imagem: "",
-    origem: "Sintética",
-    absorcao: "Absorvível (rápida)",
-    estrutura: "Multifilamentar trançado",
-    uso: "Pele, episiorrafia, pequenos procedimentos superficiais"
+    filamento: "Monofilamentar",
+    absorcaoTipo: "Absorvível",
+    origemTipo: "Sintético",
+    uso: "Aponeurose e planos profundos"
   },
   {
-    nome: "Vicryl Plus",
+    nome: "Monocryl",
     imagem: "",
-    origem: "Sintética (com revestimento antibacteriano)",
-    absorcao: "Absorvível por hidrólise",
-    estrutura: "Multifilamentar trançado e revestido",
-    uso: "Mesmos usos do Vicryl, preferido em locais com maior risco de infecção"
+    filamento: "Monofilamentar",
+    absorcaoTipo: "Absorvível",
+    origemTipo: "Sintético",
+    uso: "Subcutâneo e intradérmico"
   },
   {
-    nome: "Poliglicólico (Dexon®)",
+    nome: "Poliéster (Dacron)",
     imagem: "",
-    origem: "Sintética",
-    absorcao: "Absorvível por hidrólise (56–70 dias)",
-    estrutura: "Multifilamentar trançado",
-    uso: "Peritônio, subcutâneo, músculo"
-  },
-  {
-    nome: "Poliglecaprona (Monocryl®)",
-    imagem: "",
-    origem: "Sintética",
-    absorcao: "Absorvível por hidrólise (perde força em 2–3 semanas; absorção ~90 dias)",
-    estrutura: "Monofilamentar",
-    uso: "Intradérmico, subcutâneo, cirurgia plástica"
-  },
-  {
-    nome: "Polidioxanona (PDS)",
-    imagem: "",
-    origem: "Sintética",
-    absorcao: "Absorvível por hidrólise (longa duração)",
-    estrutura: "Monofilamentar",
-    uso: "Aponeurose, parede abdominal, anastomoses profundas, transplantes"
-  },
-  {
-    nome: "Gliconato (Maxon)",
-    imagem: "",
-    origem: "Sintética",
-    absorcao: "Absorvível por hidrólise (longa sustentação)",
-    estrutura: "Monofilamentar",
-    uso: "Tecidos sob tensão, parede abdominal, situações que exigem longa sustentação"
-  },
-  {
-    nome: "Polipropileno (Prolene®)",
-    imagem: "",
-    origem: "Sintética",
-    absorcao: "Não absorvível",
-    estrutura: "Monofilamentar",
-    uso: "Anastomoses vasculares, aponeurose, cirurgia cardiovascular"
-  },
-  {
-    nome: "Náilon (Poliamida)",
-    imagem: "",
-    origem: "Sintética",
-    absorcao: "Não absorvível (perda lenta de força ao longo dos anos)",
-    estrutura: "Monofilamentar ou multifilamentar",
-    uso: "Pele, microanastomoses, oftalmologia"
-  },
-  {
-    nome: "Seda",
-    imagem: "",
-    origem: "Animal (fibroína do Bombyx mori)",
-    absorcao: "Não absorvível funcional (perde força progressivamente)",
-    estrutura: "Multifilamentar trançado ou torcido",
-    uso: "Ligaduras e procedimentos sem grande tensão"
+    filamento: "Multifilamentar",
+    absorcaoTipo: "Não absorvível",
+    origemTipo: "Sintético",
+    uso: "Tendões e estruturas sob tensão"
   },
   {
     nome: "Algodão",
     imagem: "",
-    origem: "Vegetal",
-    absorcao: "Não absorvível",
-    estrutura: "Multifilamentar torcido",
+    filamento: "Multifilamentar",
+    absorcaoTipo: "Não absorvível",
+    origemTipo: "Sintético",
     uso: "Ligaduras"
   },
   {
-    nome: "Linho",
+    nome: "Seda",
     imagem: "",
-    origem: "Vegetal",
-    absorcao: "Não absorvível",
-    estrutura: "Multifilamentar torcido",
-    uso: "Ligaduras"
+    filamento: "Multifilamentar",
+    absorcaoTipo: "Não absorvível",
+    origemTipo: "Natural",
+    uso: "Ligaduras e hemostasia"
   },
   {
-    nome: "Poliéster (Ethibond)",
+    nome: "Vicryl (Poliglactina)",
     imagem: "",
-    origem: "Sintética",
-    absorcao: "Não absorvível",
-    estrutura: "Multifilamentar trançado",
-    uso: "Ortopedia, fixação tendínea, estruturas sob alta tensão"
+    filamento: "Multifilamentar",
+    absorcaoTipo: "Absorvível",
+    origemTipo: "Sintético",
+    uso: "Subcutâneo e fechamento de mucosa"
   },
   {
-    nome: "PTFE",
+    nome: "Ácido Poliglicólico (PGA)",
     imagem: "",
-    origem: "Sintética",
-    absorcao: "Não absorvível",
-    estrutura: "Monofilamentar",
-    uso: "Cirurgia vascular e reconstruções delicadas"
+    filamento: "Multifilamentar",
+    absorcaoTipo: "Absorvível",
+    origemTipo: "Sintético",
+    uso: "Planos internos com necessidade de absorção"
   },
   {
-    nome: "Aço cirúrgico",
+    nome: "Catgut Simples",
     imagem: "",
-    origem: "Metálica",
-    absorcao: "Não absorvível",
-    estrutura: "Monofilamentar ou multifilamentar",
-    uso: "Ortopedia, fixação esternal, estruturas ósseas"
+    filamento: "Multifilamentar",
+    absorcaoTipo: "Absorvível",
+    origemTipo: "Natural",
+    uso: "Ligaduras e mucosa"
+  },
+  {
+    nome: "Catgut Cromado",
+    imagem: "",
+    filamento: "Multifilamentar",
+    absorcaoTipo: "Absorvível",
+    origemTipo: "Natural",
+    uso: "Subcutâneo com absorção mais lenta"
   }
 ];
 
-const roundsTotal = fios.length;
+const ROUND_OPTIONS = [5, 10, 15, 20, 24];
+let selectedRounds = 10;
+let roundsTotal = selectedRounds;
 let round = 0;
 let score = 0;
 let currentQuestion = null;
@@ -308,31 +283,6 @@ function shuffle(array) {
   return copy;
 }
 
-function pickDifferentValues(field, correctValue) {
-  const universe = Array.from(new Set(fios.map((item) => item[field]))).filter((v) => v !== correctValue);
-  return shuffle(universe).slice(0, 3);
-}
-
-function origemDireta(origem) {
-  if (origem.startsWith("Animal")) return "Animal";
-  if (origem.startsWith("Sintética")) return "Sintética";
-  if (origem.startsWith("Metálica")) return "Metálica";
-  if (origem.startsWith("Vegetal")) return "Vegetal";
-  return "Outra";
-}
-
-function absorcaoDireta(absorcao) {
-  return absorcao.startsWith("Não absorvível") ? "Não absorvível" : "Absorvível";
-}
-
-function estruturaDireta(estrutura) {
-  const e = estrutura.toLowerCase();
-  if (e.includes("monofilamentar ou multifilamentar")) return "Mono e multi";
-  if (e.includes("monofilamentar")) return "Monofilamentar";
-  if (e.includes("multifilamentar")) return "Multifilamentar";
-  return "Outra";
-}
-
 function buildVisualHtml(fio) {
   if (fio.imagem && fio.imagem.trim()) {
     const safe = fio.imagem.replace(/'/g, "\\'");
@@ -341,21 +291,34 @@ function buildVisualHtml(fio) {
   return `<div class="visual">Foto do fio (opcional)</div>`;
 }
 
+function pickNameDistractors(correctName) {
+  return shuffle(fios.map((item) => item.nome).filter((nome) => nome !== correctName)).slice(0, 3);
+}
+
+function buildTripleConfig(fio) {
+  return `${fio.filamento} • ${fio.absorcaoTipo} • ${fio.origemTipo}`;
+}
+
+function pickTripleConfigDistractors(correctConfig) {
+  const universe = Array.from(new Set(fios.map((item) => buildTripleConfig(item)))).filter((cfg) => cfg !== correctConfig);
+  return shuffle(universe).slice(0, 3);
+}
+
 function buildQuestion(fio) {
-  const type = Math.floor(Math.random() * 3);
+  const type = Math.floor(Math.random() * 7);
 
   if (type === 0) {
-    const correct = origemDireta(fio.origem);
+    const correct = fio.filamento;
     return {
       fio,
-      prompt: "Qual origem?",
+      prompt: "Qual o tipo de filamento desse fio?",
       correct,
-      options: shuffle(["Animal", "Sintética", "Metálica", "Vegetal"])
+      options: shuffle(["Monofilamentar", "Multifilamentar"])
     };
   }
 
   if (type === 1) {
-    const correct = absorcaoDireta(fio.absorcao);
+    const correct = fio.absorcaoTipo;
     return {
       fio,
       prompt: "Absorvível ou não absorvível?",
@@ -364,13 +327,71 @@ function buildQuestion(fio) {
     };
   }
 
-  const correct = estruturaDireta(fio.estrutura);
+  if (type === 2) {
+    const correct = fio.origemTipo;
+    return {
+      fio,
+      prompt: "Quanto à origem, ele é:",
+      correct,
+      options: shuffle(["Sintético", "Natural"])
+    };
+  }
+
+  if (type === 3) {
+    const correct = `${fio.filamento} • ${fio.absorcaoTipo}`;
+    const universe = Array.from(new Set(fios.map((item) => `${item.filamento} • ${item.absorcaoTipo}`)));
+    const distractors = shuffle(universe.filter((value) => value !== correct)).slice(0, 3);
+    return {
+      fio,
+      prompt: "Qual é a classificação combinada deste fio?",
+      correct,
+      options: shuffle([correct, ...distractors])
+    };
+  }
+
+  if (type === 4) {
+    const correct = buildTripleConfig(fio);
+    const distractors = pickTripleConfigDistractors(correct);
+    return {
+      fio,
+      prompt: "Acerte a configuração do fio:",
+      correct,
+      options: shuffle([correct, ...distractors])
+    };
+  }
+
+  if (type === 5) {
+    const correct = fio.nome;
+    const distractors = pickNameDistractors(correct);
+    return {
+      fio,
+      prompt: `Qual fio tem a configuração: ${buildTripleConfig(fio)}?`,
+      correct,
+      options: shuffle([correct, ...distractors])
+    };
+  }
+
+  const correct = fio.nome;
+  const distractors = pickNameDistractors(correct);
   return {
     fio,
-    prompt: "Mono ou multi?",
+    prompt: `Qual fio corresponde a: ${fio.filamento}, ${fio.absorcaoTipo}, ${fio.origemTipo}?`,
     correct,
-    options: shuffle(["Monofilamentar", "Multifilamentar", "Mono e multi"])
+    options: shuffle([correct, ...distractors])
   };
+}
+
+function setRounds(value) {
+  selectedRounds = value;
+  showStart();
+}
+
+function buildRoundPool(total) {
+  const pool = [];
+  while (pool.length < total) {
+    pool.push(...shuffle([...fios]));
+  }
+  return pool.slice(0, total);
 }
 
 function updateStats() {
@@ -391,12 +412,17 @@ function showStart() {
   round = 0;
   score = 0;
   waitingNext = false;
+  roundsTotal = selectedRounds;
   updateStats();
   updateProgress();
 
   document.getElementById("card").innerHTML = `
     <h2 class="question">Jogo de Síntese</h2>
-    <p class="subtitle">Treine a classificação dos fios com perguntas direcionadas.</p>
+    <p class="subtitle">Perguntas focadas nos fios principais e nas suas características.</p>
+    <div class="difficulty-group">
+      ${ROUND_OPTIONS.map((value) => `<button class="mode-btn ${selectedRounds === value ? "active" : ""}" type="button" onclick="setRounds(${value})">${value}</button>`).join("")}
+    </div>
+    <p class="subtitle">Quantidade de questões: ${selectedRounds}</p>
     <button class="btn primary" type="button" onclick="startGame()">Iniciar Jogo</button>
   `;
 }
@@ -404,7 +430,8 @@ function showStart() {
 function startGame() {
   round = 0;
   score = 0;
-  roundFios = shuffle([...fios]);
+  roundsTotal = selectedRounds;
+  roundFios = buildRoundPool(roundsTotal);
   nextQuestion();
 }
 

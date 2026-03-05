@@ -18,6 +18,24 @@
   --shadow: 0 18px 50px rgba(3, 9, 22, 0.45);
 }
 
+html[data-theme="light"] {
+  --bg-start: #e9f2ff;
+  --bg-end: #cfe2ff;
+  --text-primary: #0f2f52;
+  --text-secondary: #345f8b;
+  --text-muted: #4f739a;
+  --surface: rgba(255, 255, 255, 0.65);
+  --surface-strong: rgba(255, 255, 255, 0.85);
+  --surface-soft: rgba(255, 255, 255, 0.58);
+  --border: rgba(33, 74, 118, 0.22);
+  --border-strong: rgba(33, 74, 118, 0.35);
+  --accent: #2d74be;
+  --accent-2: #1f6bb8;
+  --danger: #bb2e2e;
+  --success: #23824a;
+  --shadow: 0 16px 36px rgba(42, 79, 121, 0.25);
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -43,6 +61,10 @@ body::before {
   background-size: 26px 26px;
   pointer-events: none;
   opacity: 0.28;
+}
+
+html[data-theme="light"] body::before {
+  opacity: 0.12;
 }
 
 .app,
@@ -123,7 +145,7 @@ h1 {
   transition: .2s ease;
   font-weight: 700;
   background: rgba(127, 183, 255, 0.14);
-  color: #e9f2ff;
+  color: var(--text-primary);
   padding: 9px 13px;
   text-decoration: none;
   display: inline-flex;
@@ -261,7 +283,7 @@ h1 {
 .option-btn {
   font-family: "Inter", Arial, sans-serif;
   background: rgba(127,183,255,.16);
-  color: #e9f2ff;
+  color: var(--text-primary);
   border: 1px solid var(--border);
   border-radius: 10px;
 }
@@ -277,7 +299,7 @@ h1 {
 .welcome-screen { margin-bottom: 12px; padding: 26px; }
 .mode-section-title {
   margin: 0 0 8px;
-  color: #dbe9fb;
+  color: var(--text-secondary);
   font-size: .95rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -631,8 +653,34 @@ h1 {
 .result-final { margin-top: 14px; }
 .surgery-indicator {
   margin: 0 0 10px;
-  color: #d8e7fb;
+  color: var(--text-secondary);
   font-weight: 700;
+}
+
+html[data-theme="light"] .pill.active {
+  color: #153a62;
+  background: rgba(45,116,190,.22);
+}
+
+html[data-theme="light"] .pill.done {
+  color: #174f31;
+  background: rgba(92, 165, 117, 0.24);
+}
+
+html[data-theme="light"] .mode-badge {
+  color: #153a62;
+  border-color: rgba(21, 58, 98, 0.35);
+  background: rgba(255,255,255,0.68);
+}
+
+html[data-theme="light"] .slot-hint,
+html[data-theme="light"] .campo-hint,
+html[data-theme="light"] .team-token .token-hint {
+  color: #8d2f2f;
+}
+
+.theme-toggle {
+  margin-left: auto;
 }
 
 .result-errors {

@@ -123,13 +123,11 @@ h1 {
 <body>
 <div class="app">
   <h1>Qual é o Sinal?</h1>
-  <p class="subtitle">Veja o nome do instrumento e escolha o gesto correto entre 4 opções.</p>
+  <p class="subtitle">Veja a foto do sinal e escolha a descrição correta.</p>
 
   <div class="topbar">
     <a class="btn" href="flashcards.html">← Voltar para Instrumentais</a>
-    <a class="btn" href="sintese.html">Síntese</a>
-    <a class="btn" href="simulacao-completa.html">Simulação Completa</a>
-    <button class="btn" type="button" onclick="showStart()">Reiniciar</button>
+    <button class="btn theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()">☀️ Modo Claro</button>
   </div>
 
   <div class="stats" id="stats"></div>
@@ -138,22 +136,59 @@ h1 {
 </div>
 
 <script>
-const sinais = [
-  { instrumento: "Bisturi", gesto: "Lápis / violino: mão em pinça fina simulando empunhadura do bisturi." },
-  { instrumento: "Tesoura Curva", gesto: "Indicador e médio simulando tesoura com trajetória curva." },
-  { instrumento: "Tesoura Reta", gesto: "Indicador e médio paralelos simulando tesoura em corte reto." },
-  { instrumento: "Pinça Anatômica", gesto: "Pinça fina: polegar e indicador aproximados sem dente." },
-  { instrumento: "Pinça Dente de Rato", gesto: "Pinça fina com 'dente': gesto de pinça com ponta em gancho." },
-  { instrumento: "Gaze", gesto: "Mão em concha com movimento curto de limpeza." },
-  { instrumento: "Compressa", gesto: "Mãos abertas formando apoio amplo para compressa." },
-  { instrumento: "Fio para Ligadura", gesto: "Gesto de laço/círculo com os dedos para ligadura." },
-  { instrumento: "Pinça Hemostática", gesto: "Pinça com trava: fechar e simular travamento da cremalheira." },
-  { instrumento: "Porta Agulha", gesto: "Pinça firme de punho, simulando preensão de agulha." },
-  { instrumento: "Farabeuf", gesto: "Dois dedos em gancho retraindo lateralmente." },
-  { instrumento: "Doyen", gesto: "Palma em curva ampla para afastamento profundo." },
-  { instrumento: "Gosset", gesto: "Duas mãos afastando em autoestático bilateral." },
-  { instrumento: "Backaus", gesto: "Pinça pontiaguda de campo: pinçar e fixar os panos." }
+function applyTheme(theme) {
+  const next = theme === "light" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("siteTheme", next);
+  const btn = document.getElementById("themeToggleBtn");
+  if (btn) btn.textContent = next === "dark" ? "☀️ Modo Claro" : "🌙 Modo Escuro";
+}
+
+function toggleTheme() {
+  const current = localStorage.getItem("siteTheme") || "dark";
+  applyTheme(current === "dark" ? "light" : "dark");
+}
+
+applyTheme(localStorage.getItem("siteTheme") || "dark");
+
+const SINAIS_FOTOS = [
+  "Tesoura Reta.png",
+  "Tesoura Reta 2.png",
+  "Tesoura Reta 3.png",
+  "Tesoura Curva.png",
+  "Tesoura Curva 2.png",
+  "Porta-Agulha.png",
+  "Pinça Hemostática Curva.png",
+  "Pinça Dente de Rato.png",
+  "Pinça Anatômica.png",
+  "Gosset.png",
+  "Gaze.png",
+  "Gaze 2.png",
+  "Fio de Ligadura.png",
+  "Fio de Ligadura 2.png",
+  "Farabeuf.png",
+  "Farabeuf 2.png",
+  "Doyen.png",
+  "Compressa.png",
+  "Compressa 2.png",
+  "Backaus.png",
+  "Backaus 2.png"
 ];
+
+function normalizeInstrumentName(fileName) {
+  return fileName
+    .replace(/\.(png|jpg|jpeg|webp)$/i, "")
+    .replace(/\s\d+$/, "")
+    .trim();
+}
+
+const sinais = SINAIS_FOTOS.map((fileName) => {
+  const instrumento = normalizeInstrumentName(fileName);
+  return {
+    instrumento,
+    imagem: `sinais/${fileName}`
+  };
+});
 
 const roundsTotal = sinais.length;
 let round = 0;
@@ -161,6 +196,7 @@ let score = 0;
 let currentQuestion = null;
 let waitingNext = false;
 let order = [];
+let correctSlotQueue = [];
 
 function shuffle(array) {
   const copy = [...array];
@@ -171,9 +207,20 @@ function shuffle(array) {
   return copy;
 }
 
-function buildOptions(correctGesto) {
-  const distractors = shuffle(sinais.map((item) => item.gesto).filter((gesto) => gesto !== correctGesto)).slice(0, 3);
-  return shuffle([correctGesto, ...distractors]);
+function nextCorrectSlot() {
+  if (correctSlotQueue.length === 0) {
+    correctSlotQueue = shuffle([0, 1, 2, 3]);
+  }
+  return correctSlotQueue.pop();
+}
+
+function buildOptions(correctName) {
+  const pool = Array.from(new Set(sinais.map((item) => item.instrumento))).filter((name) => name !== correctName);
+  const distractors = shuffle(pool).slice(0, 3);
+  const correctIndex = nextCorrectSlot();
+  const options = [...distractors];
+  options.splice(correctIndex, 0, correctName);
+  return options;
 }
 
 function updateStats() {
@@ -200,7 +247,7 @@ function showStart() {
 
   document.getElementById("card").innerHTML = `
     <h2 class="question">Treino de sinal cirúrgico</h2>
-    <p class="subtitle">Você verá o nome do instrumento e escolherá o gesto correto.</p>
+    <p class="subtitle">Você verá a foto do sinal e escolherá o nome correto.</p>
     <button class="btn primary" type="button" onclick="startGame()">Iniciar Jogo</button>
   `;
 }
@@ -209,6 +256,7 @@ function startGame() {
   round = 0;
   score = 0;
   order = shuffle([...sinais]);
+  correctSlotQueue = [];
   nextQuestion();
 }
 
@@ -222,16 +270,17 @@ function nextQuestion() {
   const item = order[round];
   currentQuestion = {
     instrumento: item.instrumento,
-    correct: item.gesto,
-    options: buildOptions(item.gesto)
+    imagem: item.imagem,
+    correct: item.instrumento,
+    options: buildOptions(item.instrumento)
   };
 
   updateStats();
   updateProgress();
 
   document.getElementById("card").innerHTML = `
-    <h3 class="instrument-name">Instrumento: ${currentQuestion.instrumento}</h3>
-    <h2 class="question">Qual é o sinal?</h2>
+    <div class="visual"><img src="${currentQuestion.imagem}" alt="Sinal de ${currentQuestion.instrumento}" onerror="this.parentElement.textContent='Imagem não encontrada'; this.remove();"></div>
+    <h2 class="question">Qual é o nome do sinal?</h2>
     <div class="options" id="options"></div>
     <div class="feedback" id="feedback"></div>
     <div class="next-wrap"><button class="btn hidden" id="nextBtn" type="button" onclick="advanceRound()">Próxima</button></div>

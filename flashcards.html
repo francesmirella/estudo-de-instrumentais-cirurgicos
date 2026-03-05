@@ -376,6 +376,14 @@ h1 {
   background: linear-gradient(135deg, rgba(126,87,255,0.28), rgba(33,150,243,0.2));
   border-color: rgba(172,190,255,0.55);
 }
+.mode-card.coming {
+  opacity: .72;
+  cursor: not-allowed;
+}
+.mode-card.coming:hover {
+  transform: none;
+  border-color: rgba(255,255,255,0.16);
+}
 .mode-icon {
   font-size: 1.5rem;
   line-height: 1;
@@ -427,6 +435,9 @@ h1 {
 <div class="app">
   <h1>Instrumentais Cirúrgicos Flashcards</h1>
   <p class="subtitle">Escolha o modo de estudo para começar.</p>
+  <div class="topbar">
+    <button class="btn theme-toggle" id="themeToggleBtn" type="button" onclick="toggleTheme()">☀️ Modo Claro</button>
+  </div>
 
   <div id="welcomeScreen" class="welcome-screen">
     <h2 class="welcome-title">Como você quer estudar hoje?</h2>
@@ -470,6 +481,12 @@ h1 {
         <p class="mode-name">Simulação Completa</p>
         <p class="mode-desc">Fluxo completo da cirurgia: raciocínio, mesa e equipe.</p>
       </a>
+      <button class="mode-card advanced coming" type="button" disabled>
+        <span class="mode-badge">Em breve</span>
+        <span class="mode-icon">✂️</span>
+        <p class="mode-name">Diérese</p>
+        <p class="mode-desc">Em breve.</p>
+      </button>
     </div>
   </div>
 
@@ -481,9 +498,7 @@ h1 {
       <button id="quizModeBtn" class="mode-btn" type="button" onclick="setMode('quiz')">Quiz</button>
       <button id="listModeBtn" class="mode-btn" type="button" onclick="setMode('lista')">Lista</button>
       <button id="analysisModeBtn" class="mode-btn" type="button" onclick="setMode('analise')">Análise</button>
-      <button class="mode-btn" type="button" onclick="window.location.href='sintese.html'">Síntese</button>
-      <button class="mode-btn" type="button" onclick="window.location.href='qual-e-o-sinal.html'">Qual é o Sinal?</button>
-      <button class="mode-btn" type="button" onclick="window.location.href='simulacao-completa.html'">Simulação Completa</button>
+      <button class="mode-btn" type="button" onclick="backToMenu()">Voltar ao menu inicial</button>
       <button class="mode-btn" type="button" onclick="resetAnalise()">Resetar análise</button>
     </div>
 
@@ -569,6 +584,27 @@ h1 {
 </div>
 
 <script>
+function applyTheme(theme) {
+  const next = theme === "light" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("siteTheme", next);
+  const btn = document.getElementById("themeToggleBtn");
+  if (btn) btn.textContent = next === "dark" ? "☀️ Modo Claro" : "🌙 Modo Escuro";
+}
+
+function toggleTheme() {
+  const current = localStorage.getItem("siteTheme") || "dark";
+  applyTheme(current === "dark" ? "light" : "dark");
+}
+
+function backToMenu() {
+  document.getElementById("studyArea").classList.add("hidden");
+  document.getElementById("welcomeScreen").classList.remove("hidden");
+  clearTimer();
+}
+
+applyTheme(localStorage.getItem("siteTheme") || "dark");
+
 const instrumentos = [
   { nome: "Pinça Adson", tempo: "Preensão", grupo: "Preensão", imagem: "imagens/adson 1.jpg" },
   { nome: "Pinça Adson", tempo: "Preensão", grupo: "Preensão", imagem: "imagens/adson 2.jpg" },
